@@ -1,0 +1,15 @@
+{
+  "name": "lyucean/abxtest.com",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "lyucean",
+      "email": "lyucean@gmail.com"
+    }
+  ],
+  "require": {
+
+  }
+}
