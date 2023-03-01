@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path')
 const FileManagerPlugin = require('filemanager-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
   entry: path.join(__dirname, 'src/js', 'index.js'),
@@ -8,7 +9,17 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: 'index.[contenthash:8].js',
   },
-
+  module: {
+    rules: [
+      {
+        test: /\.(scss|css)$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader'
+        ],
+      },
+    ]
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'src', 'home.html'),
@@ -21,15 +32,10 @@ module.exports = {
         },
       },
     }),
+    new MiniCssExtractPlugin({
+      filename: '[name].[contenthash].css',
+    }),
   ],
-  module: {
-    rules: [
-      {
-        test: /\.(scss|css)$/,
-        use: ['style-loader', 'css-loader'],
-      },
-    ]
-  },
   devServer: {
     watchFiles: path.join(__dirname, 'src'),
     port: 9090,
