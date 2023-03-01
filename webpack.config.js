@@ -6,13 +6,14 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 module.exports = {
   entry: path.join(__dirname, 'src/js', 'index.js'),
   output: {
+    publicPath: '/',
     path: path.join(__dirname, 'dist'),
     filename: 'index.[contenthash:8].js',
   },
   module: {
     rules: [
       {
-        test: /\.(scss|css)$/,
+        test: /\.css$/,
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader'
