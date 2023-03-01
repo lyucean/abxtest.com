@@ -30,6 +30,18 @@ module.exports = {
         onStart: {
           delete: ['dist'],
         },
+        onEnd: {
+          copy: [
+            {
+              source: path.join('src', 'favicon.ico'),
+              destination: 'dist/favicon.ico',
+            },
+            {
+              source: path.join('src/img', '*'),
+              destination: 'dist/img',
+            },
+          ],
+        },
       },
     }),
     new MiniCssExtractPlugin({
