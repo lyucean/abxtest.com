@@ -4,6 +4,11 @@ const FileManagerPlugin = require('filemanager-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 
+//TODO временно для вёрстки
+let fs = require('fs');
+const header = fs.readFileSync(path.join(__dirname, 'src', 'header.html'));
+const footer = fs.readFileSync(path.join(__dirname, 'src', 'footer.html'));
+
 module.exports = {
   entry: path.join(__dirname, 'src/js', 'index.js'),
   output: {
@@ -27,6 +32,15 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'src', 'home.html'),
       filename: 'index.html',
+      header: header,
+      footer: footer
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Custom template',
+      template: path.join(__dirname, 'src', 'test.html'),
+      filename: 'test.html',
+      header: header,
+      footer: footer
     }),
     new FileManagerPlugin({
       events: {
