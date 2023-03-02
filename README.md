@@ -11,6 +11,7 @@ node:
 - `npm i -D filemanager-webpack-plugin` удаление, копирование и перемещение внутри проекта
 - `npm i -D style-loader css-loader` сборка и добавление css к проекту
 - `npm i -D mini-css-extract-plugin` извлечение CSS из файлов .js
+- `npm install --save-dev favicons favicons-webpack-plugin` добавляет favicons
 
 
 
