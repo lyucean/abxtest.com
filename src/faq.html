@@ -1,10 +1,51 @@
 <%= htmlWebpackPlugin.options.header %>
 
 
-
-          <div class="row align-items-center justify-content-center">
-            faq
-          </div>
+<div class="row align-items-center justify-content-center">
+  <div class="col-lg-8 col-md-10 col-sm-12 justify-content-md-center">
+    <div class="row justify-content-md-center">
+      <div class="col-12 align-self-center">
+        <h1 class="text-center">
+          FAQ
+        </h1>
+        <p>
+        <h5  class="text-muted">Что это такое?</h5>
+          ABX тест — разновидность слепого метода тестирования. Когда испытуемый не знает, какой из сравниваемых файлов
+          звучит в данный момент и должен определить это исключительно на слух по определённым правилам.
+        </p>
+        <p>
+        <h5  class="text-muted">Зачем это?</h5>
+          Тест определяет, слышите ли вы разницу между разными форматами/битрейтами на вашей акустике или нет.
+          <b>Лечит аудофилию на ранней стадии.</b>
+        </p>
+        <h5  class="text-muted">Как этим пользоваться?</h5>
+        <ul class="list-unstyled">
+          <li>1. Нажимаете Старт</li>
+          <li>2. Выбирает 2 варианта аудио форматов/битрейтов.</li>
+          <li>3. Жмёте пройти.</li>
+          <li>4. Вам будут доступны 3 композиции:
+            <ul class="list-unstyled ">
+              <li>
+                <button type="button" class="btn btn-primary">А</button>
+                - Первый формат
+              </li>
+              <li>
+                <button type="button" class="btn btn-success">B</button>
+                - Второй формат
+              </li>
+              <li>
+                <button type="button" class="btn btn-danger">X</button>
+                - Трек, который необходимо определить.
+              </li>
+            </ul>
+          </li>
+          <li>5. Выбираете, какой из форматов похож на тот трек, что играет и жмёте подтвердить.</li>
+          <li>6. Пройдя все треки, вам будет доступен результат.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <%= htmlWebpackPlugin.options.footer %>
