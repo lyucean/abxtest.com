@@ -37,21 +37,24 @@ module.exports = {
       footer: footer
     }),
     new HtmlWebpackPlugin({
-      title: 'Test',
       template: path.join(__dirname, 'src', 'test.html'),
       filename: 'test.html',
       header: header,
       footer: footer
     }),
     new HtmlWebpackPlugin({
-      title: 'FAQ',
+      template: path.join(__dirname, 'src', 'choice.html'),
+      filename: 'choice.html',
+      header: header,
+      footer: footer
+    }),
+    new HtmlWebpackPlugin({
       template: path.join(__dirname, 'src', 'faq.html'),
       filename: 'faq.html',
       header: header,
       footer: footer
     }),
     new HtmlWebpackPlugin({
-      title: 'Result',
       template: path.join(__dirname, 'src', 'result.html'),
       filename: 'result.html',
       header: header,
