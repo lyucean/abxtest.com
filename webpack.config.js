@@ -10,6 +10,7 @@ const header = fs.readFileSync(path.join(__dirname, 'src', 'header.html'));
 const footer = fs.readFileSync(path.join(__dirname, 'src', 'footer.html'));
 
 module.exports = {
+  mode: 'development',
   entry: path.join(__dirname, 'src/js', 'index.js'),
   output: {
     publicPath: '/',
@@ -36,9 +37,23 @@ module.exports = {
       footer: footer
     }),
     new HtmlWebpackPlugin({
-      title: 'Custom template',
+      title: 'Test',
       template: path.join(__dirname, 'src', 'test.html'),
       filename: 'test.html',
+      header: header,
+      footer: footer
+    }),
+    new HtmlWebpackPlugin({
+      title: 'FAQ',
+      template: path.join(__dirname, 'src', 'faq.html'),
+      filename: 'faq.html',
+      header: header,
+      footer: footer
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Result',
+      template: path.join(__dirname, 'src', 'result.html'),
+      filename: 'result.html',
       header: header,
       footer: footer
     }),
