@@ -1,20 +1,74 @@
 <%= htmlWebpackPlugin.options.header %>
 
+<br/>
+<br/>
+
+<div class="row justify-content-center">
+  <div class="col-3">
+    <div class="card bg-primary mb-3" style="max-width: 18rem;">
+      <div class="card-header text-center text-white lead">A (mp3 320 kbps)</div>
+      <div class="card-body">
+        <button class="btn btn-block btn-primary text-center" style="font-size: 30px">
+          <i class="bi bi-play-fill bi-3x"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="col-3 offset-2">
+    <div class="card bg-success">
+      <div class="card-header text-center text-white lead">B (mp3 128 kbps)</div>
+      <div class="card-body">
+        <button class="btn btn-block btn-success text-center" style="font-size: 30px">
+          <i class="bi bi-play-fill"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-3">
+    <div class="card bg-danger">
+      <div class="card-header text-center lead text-white">X (Неизвестный)</div>
+      <div class="card-body">
+        <button class="btn btn-block btn-danger text-center" style="font-size: 30px">
+          <i class="bi bi-play-fill"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr/>
+
+<div class="row justify-content-center">
+  <div class="col-4">
+    <br/>
+    <h5 class="lead text-center">Какой вариант скрывается за X?</h5>
+    <br/>
+    <div class="row">
+      <div class="col-4 align-self-center text-right">
+        <a href="result.html" class="btn btn-primary" style="font-size: 1.32875rem;">A</a>
+      </div>
+      <div class="col-4 align-self-center text-center">
+        <span class="lead align-middle">или</span>
+      </div>
+      <div class="col-4 align-self-center text-left">
+        <a href="result.html" class="btn btn-success" style="font-size: 1.32875rem;">B</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br/>
+<hr/>
+<br/>
+<br/>
 
 
-          <div class="row align-items-center justify-content-center">
-            <div class="col-lg-4 col-md-6 col-sm-8 col-10">
-              <div class="row justify-content-md-center">
-                test
-              </div>
-            </div>
-          </div>
+<!--<button type="button" class="btn btn-primary">Primary</button>-->
+<!--<button type="button" class="btn btn-success">Success</button>-->
+<!--<button type="button" class="btn btn-danger">Danger</button>-->
+<!--<a href="choice.html" class="btn btn-info">Again?</a>-->
 
-
-
-
-<button type="button" class="btn btn-primary">Primary</button>
-<button type="button" class="btn btn-success">Success</button>
-<button type="button" class="btn btn-danger">Danger</button>
-<a href="choice.html" class="btn btn-info">Again?</a>
 <%= htmlWebpackPlugin.options.footer %>
