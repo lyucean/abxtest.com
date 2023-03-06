@@ -32,4 +32,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: ls -a
+          script: | 
+            rm -rf /var/www/abxtest.com/*
+            cp /home/runner/work/abxtest.com/abxtest.com/./dist/* /var/www/abxtest.com/
