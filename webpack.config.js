@@ -4,11 +4,9 @@ const FileManagerPlugin = require('filemanager-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const webpack = require('webpack');
-
-//TODO временно для вёрстки
 let fs = require('fs');
-const header = fs.readFileSync(path.join(__dirname, 'src', 'header.html'));
-const footer = fs.readFileSync(path.join(__dirname, 'src', 'footer.html'));
+
+const base_template = path.join(__dirname, 'src', 'index.html'); // базовый шаблон
 
 module.exports = {
   mode: 'development',
@@ -32,52 +30,35 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'src', 'home.html'),
+      template: base_template,
       filename: 'index.html',
-      header: header,
-      footer: footer
+      content: fs.readFileSync(path.join(__dirname, 'src/includes', 'home.html')),
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'src', 'test.html'),
-      filename: 'test.html',
-      header: header,
-      footer: footer
-    }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'src', 'choice.html'),
+      template: base_template,
       filename: 'choice.html',
-      header: header,
-      footer: footer
+      content: fs.readFileSync(path.join(__dirname, 'src/includes', 'choice.html')),
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'src', 'faq.html'),
+      template: base_template,
+      filename: 'test.html',
+      content: fs.readFileSync(path.join(__dirname, 'src/includes', 'test.html')),
+    }),
+    new HtmlWebpackPlugin({
+      template: base_template,
       filename: 'faq.html',
-      header: header,
-      footer: footer
+      content: fs.readFileSync(path.join(__dirname, 'src/includes', 'faq.html')),
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'src', 'result.html'),
+      template: base_template,
       filename: 'result.html',
-      header: header,
-      footer: footer
+      content: fs.readFileSync(path.join(__dirname, 'src/includes', 'result.html')),
     }),
     new FileManagerPlugin({
       events: {
         onStart: {
           delete: ['dist'],
         },
-        // onEnd: {
-        //   copy: [
-        //     {
-        //       source: path.join('src', 'favicon.ico'),
-        //       destination: 'dist/favicon.ico',
-        //     },
-        //     {
-        //       source: path.join('src/img', '*'),
-        //       destination: 'dist/asset/img',
-        //     },
-        //   ],
-        // },
       },
     }),
     new MiniCssExtractPlugin({
