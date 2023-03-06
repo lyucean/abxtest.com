@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  webpack:
+    container_name: webpack
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "9090:9090"
+    command: npm run serve
+    depends_on:
+      - node_modules
+  node_modules:
+    image: node:14
+    command: echo "Node Modules"
