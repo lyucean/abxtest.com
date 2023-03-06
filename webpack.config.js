@@ -10,7 +10,10 @@ const base_template = path.join(__dirname, 'src', 'index.html'); // базовы
 
 module.exports = {
   mode: 'development',
-  entry: path.join(__dirname, 'src/js', 'index.js'),
+  entry: {
+    main: path.join(__dirname, 'src/js', 'index.js'),
+    vendor: path.join(__dirname, 'src/js', 'jquery.js'),
+  },
   output: {
     publicPath: '/',
     path: path.join(__dirname, 'dist'),
