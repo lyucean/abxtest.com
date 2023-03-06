@@ -17,5 +17,5 @@ node:
 
 
 - Сборка проекта - `npm build`
-- Поднять дев - `npm start`
-- Поднять прод - `npm start_prod`
+- Поднять дев - `npm serve`
+- Поднять прод - `npm start`
