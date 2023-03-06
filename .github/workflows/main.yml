@@ -34,4 +34,8 @@ jobs:
           port: ${{ secrets.PORT }}
           script: | 
             rm -rf /var/www/abxtest.com/*
-            cp /home/runner/work/abxtest.com/abxtest.com/./dist/* /var/www/abxtest.com/
+            ls -alh /home/
+            ls -alh /home/runner/
+            ls -alh /home/runner/work/
+            ls -alh /home/runner/work/abxtest.com/
+            ls -alh /home/runner/work/abxtest.com/abxtest.com/./dist/
