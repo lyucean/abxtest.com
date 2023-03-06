@@ -5,9 +5,6 @@ body, html {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-/*TODO пока так отсюда https://icons.getbootstrap.com/#install */
-@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css");
-
 .logo {
     padding-left: 2%;
     font-weight: 100;
@@ -18,25 +15,22 @@ body, html {
 }
 
 h1, h2, h3, h4 , h5 {
-    font-weight: 400;
-    color: #495057;
+    font-weight: 100;
+    color: #636d77;
 }
 
 p, ul, input, label {
-    color: #495057;
+    color: #868e96;
+    font-size: 1.22875rem;
+    font-weight: 300;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-[class^=col] {
-    /*padding-top: .75rem;*/
-    /*padding-bottom: .75rem;*/
+.card-body-play{
+    font-size: 24px;
+}
 
+[class^=col] {
     /*background-color: rgba(86,61,124,.15);*/
     /*border: 1px solid rgba(86,61,124,.2);*/
 }
-
-/*.row {*/
-/*    min-height: 10rem;*/
-/*}*/
-
-/*background-color: rgba(255,0,0,.1);*/
