@@ -19,3 +19,5 @@ node:
 - Сборка проекта - `npm build`
 - Поднять дев - `npm serve`
 - Поднять прод - `npm start`
+
+test
