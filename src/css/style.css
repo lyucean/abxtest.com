@@ -29,6 +29,10 @@ p, ul, input, label {
 .card-body-play{
     font-size: 24px;
 }
+.author{
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
 
 [class^=col] {
     /*background-color: rgba(86,61,124,.15);*/
