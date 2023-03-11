@@ -30,7 +30,8 @@ p, ul, input, label {
     font-size: 14px;
     font-family: BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
 }
-.author a{
+
+.author a {
     background: rgb(223 223 223);
     text-transform: uppercase;
     font-weight: 900;
@@ -40,7 +41,8 @@ p, ul, input, label {
     font-size: 12px;
     margin-right: -21px;
 }
-.author a:hover{
+
+.author a:hover {
     background: #ff671f;
     color: #ffffff;
     text-decoration: none;
@@ -50,20 +52,35 @@ p, ul, input, label {
     font-size: 24px;
 }
 
+.choice .form-check {
+    padding-left: 1.7rem;
+    border-radius: 12px;
+}
+
+.choice .form-check:hover {
+    background: rgba(173, 181, 189, 0.5);
+}
+
 .choice .form-check-label {
     font-size: 15px;
+    font-weight: 400;
     margin-bottom: 1px;
     cursor: pointer;
 }
 
+.choice input:checked:checked+label,
 .choice .form-check-label:hover {
     cursor: pointer;
-    font-weight: 400;
     color: #545b62;
 }
 
 .choice input[type="radio"], input[type="checkbox"] {
     margin-top: 0.42rem;
+}
+
+.answer-options .card-header,
+.answer a.btn{
+    font-size: 1.32875rem;
 }
 
 [class^=col] {
