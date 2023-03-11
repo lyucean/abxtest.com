@@ -1,15 +1,11 @@
 version: '3.8'
 services:
   webpack:
+    profiles: [ "frontend" ]
     container_name: webpack
-    build: .
+    build: ./docker/webpack/Dockerfile
     volumes:
       - .:/app
     ports:
       - "9090:9090"
     command: npm run serve
-    depends_on:
-      - node_modules
-  node_modules:
-    image: node:14
-    command: echo "Node Modules"
