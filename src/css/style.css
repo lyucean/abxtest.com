@@ -2,7 +2,7 @@
 body, html {
     height: 100%;
     /*background: ghostwhite;*/
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-family: BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
 }
 
 .logo {
@@ -14,7 +14,7 @@ body, html {
     font-weight: 100;
 }
 
-h1, h2, h3, h4 , h5 {
+h1, h2, h3, h4, h5 {
     font-weight: 100;
     color: #636d77;
 }
@@ -23,15 +23,47 @@ p, ul, input, label {
     color: #868e96;
     font-size: 1.22875rem;
     font-weight: 300;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-family: BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
 }
 
-.card-body-play{
+.author {
+    font-size: 14px;
+    font-family: BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+.author a{
+    background: rgb(223 223 223);
+    text-transform: uppercase;
+    font-weight: 900;
+    padding: 0 5px 1px 5px;
+    color: #ffffff;
+    border-radius: initial;
+    font-size: 12px;
+    margin-right: -21px;
+}
+.author a:hover{
+    background: #ff671f;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.card-body-play {
     font-size: 24px;
 }
-.author{
-    font-size: 14px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+.choice .form-check-label {
+    font-size: 15px;
+    margin-bottom: 1px;
+    cursor: pointer;
+}
+
+.choice .form-check-label:hover {
+    cursor: pointer;
+    font-weight: 400;
+    color: #545b62;
+}
+
+.choice input[type="radio"], input[type="checkbox"] {
+    margin-top: 0.42rem;
 }
 
 [class^=col] {
