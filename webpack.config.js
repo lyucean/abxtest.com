@@ -45,24 +45,34 @@ module.exports = {
       content: fs.readFileSync(path.join(__dirname, 'src/includes', 'home.html')),
     }),
     new HtmlWebpackPlugin({
-      template: base_template,
+      template: path.join(__dirname, 'src/includes', 'choice.html'),
       filename: 'choice.html',
-      content: fs.readFileSync(path.join(__dirname, 'src/includes', 'choice.html')),
+      chunks: [],
+      inject: false
     }),
     new HtmlWebpackPlugin({
-      template: base_template,
-      filename: 'test.html',
-      content: fs.readFileSync(path.join(__dirname, 'src/includes', 'test.html')),
-    }),
-    new HtmlWebpackPlugin({
-      template: base_template,
+      template: path.join(__dirname, 'src/includes', 'faq.html'),
       filename: 'faq.html',
-      content: fs.readFileSync(path.join(__dirname, 'src/includes', 'faq.html')),
+      chunks: [],
+      inject: false
     }),
     new HtmlWebpackPlugin({
-      template: base_template,
+      template: path.join(__dirname, 'src/includes', 'home.html'),
+      filename: 'home.html',
+      chunks: [],
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'src/includes', 'test.html'),
+      filename: 'test.html',
+      chunks: [],
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'src/includes', 'result.html'),
       filename: 'result.html',
-      content: fs.readFileSync(path.join(__dirname, 'src/includes', 'result.html')),
+      chunks: [],
+      inject: false
     }),
     new FileManagerPlugin({
       events: {
