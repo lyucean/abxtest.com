@@ -11,13 +11,20 @@ const base_template = path.join(__dirname, 'src', 'index.html'); // базовы
 module.exports = {
   mode: 'development',
   entry: {
-    main: path.join(__dirname, 'src/js', 'index.js'),
-    vendor: path.join(__dirname, 'src/js', 'jquery.js'),
+    main: {
+      import: path.join(__dirname, 'src/js', 'index.js'),
+      filename: '[name].[contenthash].index.js',
+    },
+    jquery: {
+      dependOn: 'main',
+      import: path.join(__dirname, 'src/js', 'jquery.js'),
+      filename: '[name].[contenthash].jquery.js',
+    },
   },
   output: {
     publicPath: '/',
     path: path.join(__dirname, 'dist'),
-    filename: 'index.[contenthash:8].js',
+    filename: 'index.[contenthash:5].js',
     assetModuleFilename: 'src/assets/images/[name].[ext]'
   },
   module: {
