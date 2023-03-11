@@ -9,3 +9,10 @@ services:
     ports:
       - "9090:9090"
     command: npm run serve
+  mock_api:
+    profiles: [ "mock_api" ]
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./docker/mock/:/usr/share/nginx/html/
