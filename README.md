@@ -13,11 +13,10 @@ node:
 - `npm i -D mini-css-extract-plugin` извлечение CSS из файлов .js
 - `npm i -D favicons favicons-webpack-plugin` добавляет favicons
 - `npm i jquery` добавляет jquery
+- `npm i bootstrap-icons` добавляет иконки bootstrap (не грузим основной bootstrap, т.к. у нас своя тема)
 
 
 
 - Сборка проекта - `npm build`
 - Поднять дев - `npm serve`
 - Поднять прод - `npm start`
-
-test
