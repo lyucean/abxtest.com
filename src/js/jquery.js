@@ -32,39 +32,40 @@ function initChoice () {
   // подгрузим варианты форматов для сравнения
   $.getJSON('http://localhost/api/get/formats.json', function (data) {
 
-    let items_a = [], items_b = [], status = '', id_a, id_b
 
-    $.each(data.formats, function (key, item) {
+    RenderChoice("a", data.formats);
+    RenderChoice("b", data.formats);
 
-      id_a = 'a_' + item['name'] + '_' + key
-      id_b = 'b_' + item['name'] + '_' + key
-
-      status = ''
-      if (item.hasOwnProperty('checked')) {
-        status = 'checked'
-      }
-
-      items_a.push('<div class="form-check">' +
-        '<input class="form-check-input" type="radio" name="radio_a" id="' + id_a + '" ' + status + ' >' +
-        '<label class="form-check-label w-100" for="' + id_a + '">' +
-        item['title'] +
-        '</label>' +
-        '</div>')
-
-      items_b.push('<div class="form-check">' +
-        '<input class="form-check-input" type="radio" name="radio_b" id="' + id_b + '" ' + status + ' >' +
-        '<label class="form-check-label w-100" for="' + id_b + '">' +
-        item['title'] +
-        '</label>' +
-        '</div>')
-    })
-
-    $('#variant_a').html(items_a.join(''))
-    $('#variant_b').html(items_b.join(''))
   }).fail(function () {
     // спросим через ещё раз
     setTimeout(() => {
       initChoice()
     }, 3000)
   })
+}
+function RenderChoice(variant, formats){
+  let items_a = [], status = '', id
+
+  $.each(formats, function (key, item) {
+
+    id = variant + '_' + item['name'] + '_' + key
+
+    status = ''
+    if (item.hasOwnProperty('checked')) {
+      status = 'checked'
+    }
+
+    items_a.push('<div class="form-check">' +
+      '<input class="form-check-input" type="radio" ' +
+      'name="radio_' + variant + '" ' +
+      'id="' + id + '" ' +
+      status + ' >' +
+      '<label class="form-check-label w-100" ' +
+      'for="' + id + '">' +
+      item['title'] +
+      '</label>' +
+      '</div>')
+  })
+
+  $('#variant_' + variant).html(items_a.join(''))
 }
