@@ -75,7 +75,7 @@ p, ul, input, label {
 }
 
 .choice input[type="radio"], input[type="checkbox"] {
-    margin-top: 0.42rem;
+    margin-top: 6px;
 }
 
 .answer-options .card-header,
