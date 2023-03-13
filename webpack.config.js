@@ -16,9 +16,14 @@ module.exports = {
       filename: '[name].[contenthash].index.js',
     },
     jquery: {
-      dependOn: 'main',
+      dependOn: 'jquery_helper',
       import: path.join(__dirname, 'src/js', 'jquery.js'),
       filename: '[name].[contenthash].jquery.js',
+    },
+    jquery_helper: {
+      dependOn: 'main',
+      import: path.join(__dirname, 'src/js', 'jquery_helper.js'),
+      filename: '[name].[contenthash].jquery_helper.js',
     },
   },
   output: {

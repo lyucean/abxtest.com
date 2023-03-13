@@ -1,0 +1,11 @@
+{
+  "tracks": {
+    "author": "track_author",
+    "name": "track_name",
+    "urls": {
+      "a": "/files/a.mp3",
+      "b": "/files/b.mp3",
+      "x": "/files/x.mp3"
+    }
+  }
+}

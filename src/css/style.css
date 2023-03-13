@@ -52,6 +52,12 @@ p, ul, input, label {
     font-size: 24px;
 }
 
+.card-header {
+    padding: 0 0.45rem;
+    background-color: rgba(0, 0, 0, 0);
+    border-bottom: none;
+}
+
 .choice .form-check {
     padding-left: 1.7rem;
     border-radius: 12px;
