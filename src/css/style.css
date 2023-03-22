@@ -48,10 +48,6 @@ p, ul, input, label {
     text-decoration: none;
 }
 
-.card-body-play {
-    font-size: 24px;
-}
-
 .card-header {
     padding: 0 0.45rem;
     background-color: rgba(0, 0, 0, 0);
@@ -84,9 +80,17 @@ p, ul, input, label {
     margin-top: 6px;
 }
 
+.answer-options .card-header{
+    margin-bottom: -30px;
+}
+
 .answer-options .card-header,
-.answer a.btn{
+.answer button.btn{
     font-size: 1.32875rem;
+}
+
+.answer-options .card-body-play {
+    font-size: 45px;
 }
 
 [class^=col] {
