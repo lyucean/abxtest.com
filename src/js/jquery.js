@@ -1,6 +1,6 @@
 import $ from 'jquery'
 
-// наша маршрутизация
+// наша маршрутизация -----------------------------------------------
 function Route () {
 
   // получим hesh страницы
@@ -42,7 +42,7 @@ $(window).on('hashchange', function () {
 Route()
 
 
-// Методы работы со страницей Выбора форматов
+// Методы работы со страницей Выбора форматов -----------------------------------------------
 function initChoice () {
 
   // подгрузим варианты форматов для сравнения
@@ -65,7 +65,7 @@ function initChoice () {
     }, 3000)
   })
 }
-
+// функция отрисовки блоков выбора форматов для сравнения
 function RenderChoice (variant, formats) {
   let items_a = [], status = '', id
 
@@ -95,12 +95,13 @@ function RenderChoice (variant, formats) {
 }
 
 
-// Методы работы со страницей тестов
+// Методы работы со страницей тестов -----------------------------------------------
 let audio = document.createElement('audio'), // Общий аудио-элемент
     progressBarListener, // функция изменения состояния прогресс-бара
     button_icon_play = '<i class="bi bi-play-fill"></i>', // иконка кнопки Играть
     button_icon_pause = '<i class="bi bi-pause-fill"></i>' // иконка кнопки Пауза
 
+// метод загрузки треков для сравнения
 function initTest () {
   // соберём аргументы для url
   let arg_url = '?v1=' + $.urlGET('v1') + '&v2=' + $.urlGET('v2')
@@ -125,6 +126,8 @@ function initTest () {
     }, 3000)
   })
 }
+
+// метод управления / сброса состояния плеера и кнопок воспроизведения
 function audioPlayer (button, data) {
 
   // остановим воспроизведение
