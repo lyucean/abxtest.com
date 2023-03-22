@@ -41,7 +41,8 @@ $(window).on('hashchange', function () {
 })
 Route()
 
-// init page Choice
+
+// Методы работы со страницей Выбора форматов
 function initChoice () {
 
   // подгрузим варианты форматов для сравнения
@@ -93,38 +94,29 @@ function RenderChoice (variant, formats) {
   $('#variant_' + variant).html(items_a.join(''))
 }
 
-let button_icon_play = '<i class="bi bi-play-fill"></i>',
-  button_icon_pause = '<i class="bi bi-pause-fill"></i>'
+
+// Методы работы со страницей тестов
+let audio = document.createElement('audio'), // Общий аудио-элемент
+    progressBarListener, // функция изменения состояния прогресс-бара
+    button_icon_play = '<i class="bi bi-play-fill"></i>', // иконка кнопки Играть
+    button_icon_pause = '<i class="bi bi-pause-fill"></i>' // иконка кнопки Пауза
 
 function initTest () {
-
-  let audio = document.createElement('audio')
   // соберём аргументы для url
   let arg_url = '?v1=' + $.urlGET('v1') + '&v2=' + $.urlGET('v2')
 
   // подгрузим варианты теста
   $.getJSON('http://localhost/api/get/test.json' + arg_url, function (data) {
 
-    // API вернёт ответ
-    // if (typeof data['tracks'] !== "undefined") {
-    //
-    // }else{
-    //   //ключа нет
-    //   console.log(1)
-    //
-    // }
-
     $('#button_play_a').click(function () {
-      audioPlayer($(this), audio, data.tracks.urls.a)
+      audioPlayer($(this), data.tracks.urls.a)
     })
     $('#button_play_b').click(function () {
-      audioPlayer($(this), audio, data.tracks.urls.b)
+      audioPlayer($(this), data.tracks.urls.b)
     })
     $('#button_play_x').click(function () {
-      audioPlayer($(this), audio, data.tracks.urls.x)
+      audioPlayer($(this), data.tracks.urls.x)
     })
-
-    // arr.indexOf(data.tracks) != -1
 
   }).fail(function () {
     // спросим через ещё раз
@@ -133,11 +125,12 @@ function initTest () {
     }, 3000)
   })
 }
-
-function audioPlayer (button, audio, data) {
+function audioPlayer (button, data) {
 
   // остановим воспроизведение
   audio.pause()
+  $('.progress-bar').css( "width", "100%" ) // и всех прогресс-баров
+  audio.removeEventListener('timeupdate', progressBarListener, false) // удалим элемент обновление прогресс - бара
 
   // если мы кликаем по той же кнопке, просто сбросим её состояние на паузу
   if (button.html() === button_icon_pause) {
@@ -145,11 +138,26 @@ function audioPlayer (button, audio, data) {
   } else {
     // Если это не так, для начала сбросим состояние всех кнопок
     $('.answer-options button.card-body-play').html(button_icon_play)
+
     // Сменим ресурс и запустим проигрыватель
     audio.setAttribute('src', data)
-    audio.play()
+
     // сменим иконку на воспроизведение
     button.html(button_icon_pause)
+
+    // как только загрузиться - запустим воспроизведение
+    audio.addEventListener("loadeddata", () => {
+      // progressEl.css( "width", "0%" );
+      audio.play()
+    });
+
+    // обновим метод обновление состояния прогресс-бара
+    progressBarListener = function () {
+      button.next().children('.progress-bar').css( "width", audio.currentTime / audio.duration * 100 + "%" );
+    };
+
+    // повесим изменение на прогресс бар кнопки
+    audio.addEventListener("timeupdate", progressBarListener);
   }
 
   // по завершению, сбросим состояние кнопки

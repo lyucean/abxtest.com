@@ -90,7 +90,13 @@ p, ul, input, label {
 }
 
 .answer-options .card-body-play {
-    font-size: 45px;
+    font-size: 40px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.answer-options .progress {
+    border-radius: 0;
 }
 
 [class^=col] {
