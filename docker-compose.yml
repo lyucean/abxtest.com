@@ -19,3 +19,7 @@ services:
       - traefik.http.services.nginx-abxtest.loadbalancer.server.port=80
     networks:
       - web
+
+networks:
+  web:
+    external: true # стандартная для всех на этом сервере
