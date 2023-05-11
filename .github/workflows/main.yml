@@ -76,3 +76,7 @@ jobs:
             Репозиторий: ${{ github.repository }}
 
             Изменения: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+
+networks:
+  web:
+    external: true # стандартная для всех на этом сервере
