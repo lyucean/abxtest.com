@@ -1,19 +1,21 @@
-version: '3.8'
+version: '3'
+
 services:
-  webpack:
-    profiles: [ "frontend" ]
-    container_name: webpack
-    build: ./docker/webpack/Dockerfile
-    volumes:
-      - .:/app
-    ports:
-      - "9090:9090"
-    command: npm run serve
-  mock_api:
-    profiles: [ "mock_api" ]
+  nginx-abxtest:
     image: nginx:latest
-    ports:
-      - "80:80"
     volumes:
-      - ./docker/mock/:/usr/share/nginx/html/
-      - ./docker/mock/hosts/default.conf:/etc/nginx/conf.d/default.conf
+      - ./dist:/usr/share/nginx/html
+    environment:
+      - NGINX_HOST=abxtest.com
+      - NGINX_INDEX=index.html
+      - NGINX_ROOT=/usr/share/nginx/html
+      - NGINX_PORT=80
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nginx-abxtest.rule=Host(`abxtest.com`)
+      - traefik.http.routers.nginx-abxtest.entrypoints=websecure
+      - traefik.http.routers.nginx-abxtest.tls=true
+      - traefik.http.routers.nginx-abxtest.tls.certresolver=letsencrypt
+      - traefik.http.services.nginx-abxtest.loadbalancer.server.port=80
+    networks:
+      - web

@@ -1,4 +1,6 @@
-name: Deploy
+name: Deployment
+
+concurrency: production
 
 on:
   push:
@@ -6,30 +8,72 @@ on:
   pull_request:
     branches: [ "master" ]
 
+
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v2
+      - name: Create project directory
+        uses: appleboy/ssh-action@master
         with:
-          node-version: 14.x
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build project
-        run: npm run build
-
-      - name: Copy single file to remote
-        uses: garygrossgarten/github-action-scp@release
-        with:
-          local: /home/runner/work/abxtest.com/abxtest.com/./dist/
-          remote: /var/www/abxtest.com
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: mkdir -p /home/user/abxtest.com
+
+      - name: Copy docker-compose.yml to remote server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          source: "./*"
+          target: "/var/www/lyucean.com"
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    steps:
+      - name: Create web network and start docker-compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /var/www/abxtest.com/
+            docker-compose up -d
+            docker ps
+
+  test:
+    runs-on: ubuntu-latest
+    needs: [publish]
+    steps:
+      - name: Check website
+        uses: wei/curl@v1
+        with:
+          args:  https://abxtest.com/
+
+  alert:
+    name: Alert
+    runs-on: ubuntu-latest
+    needs: [publish]
+    steps:
+      - name: Send telegram message on push
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            ${{ github.actor }} создал commit:
+            Commit: ${{ github.event.commits[0].message }}
+
+            Репозиторий: ${{ github.repository }}
+
+            Изменения: https://github.com/${{ github.repository }}/commit/${{github.sha}}
