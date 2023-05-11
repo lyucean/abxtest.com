@@ -33,7 +33,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           source: "./*"
-          target: "/var/www/lyucean.com"
+          target: "/var/www/abxtest.com"
 
   publish:
     runs-on: ubuntu-latest
