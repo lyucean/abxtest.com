@@ -15168,8 +15168,8 @@ p, ul, input, label {
 }
 
 .author a:hover {
-    background: #ff671f;
-    color: #ffffff;
+    background-image: linear-gradient(146deg, #ff9f71 20%, #8bdcff 35%, #ff5a3c, #e37c0e 80%, white);
+    color: #000000;
     text-decoration: none;
 }
 
