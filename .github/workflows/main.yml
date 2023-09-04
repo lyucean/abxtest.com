@@ -49,6 +49,7 @@ jobs:
           script: |
             cd /var/www/abxtest.com/
             docker-compose up -d
+            docker-compose ps
 
   test:
     runs-on: ubuntu-latest
