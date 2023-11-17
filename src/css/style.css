@@ -43,8 +43,8 @@ p, ul, input, label {
 }
 
 .author a:hover {
-    background-image: linear-gradient(146deg, #ff9f71 20%, #8bdcff 35%, #ff5a3c, #e37c0e 80%, white);
-    color: #000000;
+    color: #ffffff;
+    background: #2966f4;
     text-decoration: none;
 }
 
