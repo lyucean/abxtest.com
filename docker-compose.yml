@@ -2,6 +2,7 @@ version: '3'
 
 services:
   nginx-abxtest:
+    restart: unless-stopped
     image: nginx:latest
     volumes:
       - ./dist:/usr/share/nginx/html
