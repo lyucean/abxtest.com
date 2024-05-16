@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [deploy]
     steps:
-      - name: Create web network and start docker-compose
+      - name: Create web network and start docker compose
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -48,8 +48,8 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /var/www/abxtest.com/
-            docker-compose up -d
-            docker-compose ps
+            docker compose up -d
+            docker compose ps
 
   test:
     runs-on: ubuntu-latest
