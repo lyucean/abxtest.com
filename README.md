@@ -2,9 +2,7 @@
 
 Platform for ABX Audio Testing https://abxtest.com
 
-node:
-
-- `npm init -y`
+Установленные пакеты node:
 - `npm i -D webpack webpack-cli`
 - `npm i -D html-webpack-plugin` плагин создает HTML-файл на основе шаблона
 - `npm i -D webpack-dev-server` сервер для разработки
@@ -17,6 +15,6 @@ node:
 
 
 
-- Сборка проекта - `npm build`
-- Поднять дев - `npm serve`
-- Поднять прод - `npm start`
+- Сборка проекта - `webpack --mode production`
+- Поднять дев - `webpack serve --open --mode development`
+- Поднять мок для разработки `make mock`

@@ -46,7 +46,7 @@ Route()
 function initChoice () {
 
   // подгрузим варианты форматов для сравнения
-  $.getJSON('http://localhost/api/get/formats.json', function (data) {
+  $.getJSON(window.location.origin.replace(window.location.port, '81') + '/api/get/formats.json', function (data) {
 
     RenderChoice('a', data.formats)
     RenderChoice('b', data.formats)
@@ -107,7 +107,7 @@ function initTest () {
   let arg_url = '?v1=' + $.urlGET('v1') + '&v2=' + $.urlGET('v2')
 
   // подгрузим варианты теста
-  $.getJSON('http://localhost/api/get/test.json' + arg_url, function (data) {
+  $.getJSON(window.location.origin.replace(window.location.port, '81') + '/api/get/test.json' + arg_url, function (data) {
 
     $('#button_play_a').click(function () {
       audioPlayer($(this), data.tracks.urls.a)

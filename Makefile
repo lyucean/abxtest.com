@@ -10,10 +10,10 @@ down: ## Stop docker containers
 	docker compose down --remove-orphans
 
 build: ## Build docker images
-	docker compose build
+	docker compose --profile=dev_frontend build
 
 up: ## Up docker containers
-	docker compose up -d
+	docker compose --profile=dev_frontend up -d
 
 restart: ## Restart docker containers
 restart: down up
