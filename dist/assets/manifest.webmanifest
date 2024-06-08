@@ -1,7 +1,7 @@
 {
   "name": "abxtest",
   "short_name": "abxtest",
-  "description": "",
+  "description": "Platform for ABX Audio Testing https://abxtest.com",
   "dir": "auto",
   "lang": "en-US",
   "display": "standalone",
