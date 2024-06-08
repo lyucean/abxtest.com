@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create project directory
         uses: appleboy/ssh-action@master
@@ -48,7 +48,7 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /var/www/abxtest.com/
-            docker compose up -d
+            docker compose --profile=prod_frontend up -d
             docker compose ps
 
   test:
