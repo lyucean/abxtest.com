@@ -16,5 +16,5 @@ up: ## Up docker containers
 	docker compose --profile=dev_frontend up -d
 
 restart: ## Restart docker containers
-restart: down up
+restart: down build up
 
