@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  nginx-abxtest:
+  abxt-nginx:
     profiles: [ "prod_frontend" ]
     restart: unless-stopped
     image: nginx:latest
@@ -22,7 +22,7 @@ services:
     networks:
       - web
 
-  nginx-abxtest-loc:
+  abxt-nginx-loc:
     profiles: [ "dev_frontend" ]
     restart: unless-stopped
     image: nginx:latest
