@@ -6,15 +6,13 @@ help:
 mock: ## добавим mock_api
 	docker compose --profile mock_api up -d
 
+up-loc: ## поднять nginx в локальной сети
+	docker compose --profile=dev_frontend up -d
+
 down: ## Stop docker containers
 	docker compose down --remove-orphans
 
 build: ## Build docker images
-	docker compose --profile=dev_frontend build
+	docker compose build
 
-up: ## Up docker containers
-	docker compose --profile=dev_frontend up -d
-
-restart: ## Restart docker containers
-restart: down build up
 
