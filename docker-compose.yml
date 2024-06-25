@@ -25,6 +25,8 @@ services:
     volumes:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./backend:/var/www/public/
+    ports:
+      - "81:80"
     depends_on:
       - abx-back-php
     labels:
@@ -33,7 +35,7 @@ services:
       - traefik.http.routers.nginx-abxtest.entrypoints=websecure
       - traefik.http.routers.nginx-abxtest.tls=true
       - traefik.http.routers.nginx-abxtest.tls.certresolver=letsencrypt
-      - traefik.http.services.nginx-abxtest.loadbalancer.server.port=80
+      - traefik.http.services.nginx-abxtest.loadbalancer.server.port=81
     networks:
       - web
 
