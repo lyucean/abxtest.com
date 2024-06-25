@@ -27,11 +27,6 @@ services:
       - ./backend:/var/www/public/
     depends_on:
       - abx-back-php
-    environment:
-      - NGINX_HOST=abxtest.com
-      - NGINX_INDEX=index.html
-      - NGINX_ROOT=/usr/share/nginx/html
-      - NGINX_PORT=80
     labels:
       - traefik.enable=true
       - traefik.http.routers.nginx-abxtest.rule=Host(`api.abxtest.com`)
