@@ -48,7 +48,12 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /var/www/abxtest.com/
-            docker compose --profile=prod_frontend up -d
+            docker compose pull
+            docker compose build
+            docker compose up -d abx-front-nginx
+            docker compose up -d abx-back-php
+            docker compose exec abx-back-php bash -c "composer install --no-interaction"
+            docker compose up -d abx-back-nginx
             docker compose ps
 
   test:
