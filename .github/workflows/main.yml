@@ -48,6 +48,7 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /var/www/abxtest.com/
+            docker compose down --remove-orphans
             docker compose pull
             docker compose build
             docker compose up -d abx-front-nginx
