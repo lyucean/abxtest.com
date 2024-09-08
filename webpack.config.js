@@ -50,12 +50,6 @@ module.exports = {
       content: fs.readFileSync(path.join(__dirname, 'frontend/includes', 'home.html')),
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'frontend/includes', 'choice.html'),
-      filename: 'choice.html',
-      chunks: [],
-      inject: false
-    }),
-    new HtmlWebpackPlugin({
       template: path.join(__dirname, 'frontend/includes', 'faq.html'),
       filename: 'faq.html',
       chunks: [],

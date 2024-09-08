@@ -9,20 +9,9 @@ function Route () {
 
   switch (url_hash) {
 
-    case 'choice':
-      div_app.load('/choice.html', function () {
-        initChoice()
-      })
-      break
     case 'test':
       div_app.load('/test.html', function () {
-        // проверка, что выбран формат
-        if ($.urlGET('v1') && $.urlGET('v2')) {
           initTest()
-        } else {
-          // если что-то не так, отправим выбрать формат
-          window.location.href = '#choice'
-        }
       })
       break
     case 'result':
@@ -41,60 +30,6 @@ $(window).on('hashchange', function () {
 })
 Route()
 
-
-// Методы работы со страницей Выбора форматов -----------------------------------------------
-function initChoice () {
-
-  // подгрузим варианты форматов для сравнения
-  $.getJSON(window.location.origin.replace(window.location.port, '81') + '/api/get/formats.json', function (data) {
-
-    RenderChoice('a', data.formats)
-    RenderChoice('b', data.formats)
-
-    // отобразим кнопку перехода и повесим событие перехода событие
-    $('#button-compare').click(function () {
-      window.location.href = window.location.origin
-        + '#test?v1=' + $('input[name=radio_a]:checked').val()
-        + '&v2=' + $('input[name=radio_b]:checked').val()
-    })
-
-  }).fail(function () {
-    // спросим через ещё раз
-    setTimeout(() => {
-      initChoice()
-    }, 3000)
-  })
-}
-// функция отрисовки блоков выбора форматов для сравнения
-function RenderChoice (variant, formats) {
-  let items_a = [], status = '', id
-
-  $.each(formats, function (key, item) {
-
-    id = variant + '_' + item['name'] + '_' + key
-
-    status = ''
-    if (item.hasOwnProperty('checked')) {
-      status = 'checked'
-    }
-
-    items_a.push('<div class="form-check">' +
-      '<input class="form-check-input" type="radio" ' +
-      'name="radio_' + variant + '" ' +
-      'id="' + id + '" ' +
-      'value="' + item['name'] + '" ' +
-      status + ' >' +
-      '<label class="form-check-label w-100" ' +
-      'for="' + id + '">' +
-      item['title'] +
-      '</label>' +
-      '</div>')
-  })
-
-  $('#variant_' + variant).html(items_a.join(''))
-}
-
-
 // Методы работы со страницей тестов -----------------------------------------------
 let audio = document.createElement('audio'), // Общий аудио-элемент
     progressBarListener, // функция изменения состояния прогресс-бара
@@ -103,11 +38,9 @@ let audio = document.createElement('audio'), // Общий аудио-элеме
 
 // метод загрузки треков для сравнения
 function initTest () {
-  // соберём аргументы для url
-  let arg_url = '?v1=' + $.urlGET('v1') + '&v2=' + $.urlGET('v2')
 
   // подгрузим варианты теста
-  $.getJSON(window.location.origin.replace(window.location.port, '81') + '/api/get/test.json' + arg_url, function (data) {
+  $.getJSON(window.location.origin.replace(window.location.port, '81') + '/api/get/test.json', function (data) {
 
     $('#button_play_a').click(function () {
       audioPlayer($(this), data.tracks.urls.a)
