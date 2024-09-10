@@ -1,42 +1,25 @@
 
 services:
-  abx-front-nginx:
-    restart: unless-stopped
-    image: nginx:latest
-    volumes:
-      - ./dist:/usr/share/nginx/html
-    environment:
-      - NGINX_HOST=abxtest.com
-      - NGINX_INDEX=index.html
-      - NGINX_ROOT=/usr/share/nginx/html
-      - NGINX_PORT=80
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.abx-front-nginx.rule=Host(`abxtest.com`)
-      - traefik.http.routers.abx-front-nginx.entrypoints=websecure
-      - traefik.http.routers.abx-front-nginx.tls=true
-      - traefik.http.routers.abx-front-nginx.tls.certresolver=letsencrypt
-      - traefik.http.services.abx-front-nginx.loadbalancer.server.port=80
-    networks:
-      - web
 
-  abx-back-nginx:
+  abx-nginx:
+    restart: unless-stopped
     image: nginx:latest
     volumes:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./backend:/var/www/public/
+      - ./dist:/usr/share/nginx/html
     labels:
       - traefik.enable=true
-      - traefik.http.routers.abx-back-nginx.rule=Host(`api.abxtest.com`)
-      - traefik.http.routers.abx-back-nginx.entrypoints=websecure
-      - traefik.http.routers.abx-back-nginx.tls=true
-      - traefik.http.routers.abx-back-nginx.tls.certresolver=letsencrypt
-      - traefik.http.services.abx-back-nginx.loadbalancer.server.port=80
+      - traefik.http.routers.abx-nginx.rule=Host(`abxtest.com`)
+      - traefik.http.routers.abx-nginx.entrypoints=websecure
+      - traefik.http.routers.abx-nginx.tls=true
+      - traefik.http.routers.abx-nginx.tls.certresolver=letsencrypt
+      - traefik.http.services.abx-nginx.loadbalancer.server.port=80
     networks:
       - web
 
-  abx-back-php:
-    container_name: abx-back-php
+  abx-php:
+    container_name: abx-php
     build: ./docker/php/
     expose:
       - 9003
@@ -47,33 +30,17 @@ services:
     networks:
       - web
 
-  abx-back-nginx-loc:
+  abx-nginx-loc:
     image: nginx:latest
     ports:
       - "80:80"
     volumes:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./backend:/var/www/public/
-    depends_on:
-      - abx-back-php
+      - ./dist:/usr/share/nginx/html
+    networks:
+      - web
 
-
-#  abxt-nginx-local:
-#    profiles: [ "dev_frontend" ]
-#    restart: unless-stopped
-#    image: nginx:latest
-#    ports:
-#      - "80:80"
-#    volumes:
-#      - ./dist:/usr/share/nginx/html
-#  mock_api:
-#    profiles: [ "mock_api" ]
-#    image: nginx:latest
-#    ports:
-#      - "81:80"
-#    volumes:
-#      - ./docker/mock/:/usr/share/nginx/html/
-#      - ./docker/mock/hosts/default.conf:/etc/nginx/conf.d/default.conf
 
 networks:
   web:

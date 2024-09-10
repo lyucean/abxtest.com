@@ -8,7 +8,7 @@ PURPLE = \033[1;35m $(shell date +"%H:%M:%S") --
 RESET = --\033[0m
 
 init: ## Инициализация проекта
-init: down pull build up-back-php composer-install up-back-nginx
+init: down pull build up-back-php composer-install up-nginx-loc
 
 down: ## Stop docker containers
 	@echo "$(PURPLE) Останавливаем контейнеры $(RESET)"
@@ -28,15 +28,12 @@ composer: ## Подключается к контейнеру PHP и работ�
 
 up-back-php: ## поднять backend php
 	@echo "$(PURPLE) Поднимем php $(RESET)"
-	docker compose up -d abx-back-php
+	docker compose up -d abx-php
 
 composer-install: ## Установим пакеты composer
 	@echo "$(PURPLE) Запуск композера $(RESET)"
-	docker compose exec abx-back-php bash -c "composer install --no-interaction"
+	docker compose exec abx-php bash -c "composer install --no-interaction"
 
-up-back-nginx: ## поднять backend nginx
+up-nginx-loc: ## поднять backend nginx
 	@echo "$(PURPLE) Поднимем backend nginx $(RESET)"
-	docker compose up -d abx-back-nginx-loc
-
-#mock: ## поднимем mock_api
-	#docker compose --profile mock_api up -d
+	docker compose up -d abx-nginx-loc

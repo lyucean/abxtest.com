@@ -51,10 +51,9 @@ jobs:
             docker compose down --remove-orphans
             docker compose pull
             docker compose build
-            docker compose up -d abx-front-nginx
-            docker compose up -d abx-back-php
-            docker compose exec abx-back-php bash -c "composer install --no-interaction"
-            docker compose up -d abx-back-nginx
+            docker compose up -d abx-nginx
+            docker compose up -d abx-php
+            docker compose exec abx-php bash -c "composer install --no-interaction"
             docker compose ps
 
   test:
