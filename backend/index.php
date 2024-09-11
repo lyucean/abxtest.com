@@ -4,6 +4,7 @@
     use Slim\Factory\AppFactory;
     use Slim\Exception\HttpNotFoundException;
     use Slim\Middleware\ErrorMiddleware;
+    use Slim\Psr7\Stream;
 
     require __DIR__ . '/vendor/autoload.php';
 
@@ -16,9 +17,36 @@
             return $response;
         });
 
-        $group->get('/', function (Request $request, Response $response, $args) {
-            $response->getBody()->write("Hello!");
-            return $response;
+        $group->get('/tracks', function (Request $request, Response $response, $args) {
+            $tracks = [
+                ["id" => "track1", "name" => "Трек 1"],
+//                ["id" => "track2", "name" => "Трек 2"],
+                // Добавьте другие треки по необходимости
+            ];
+
+            $response->getBody()->write(json_encode($tracks));
+            return $response->withHeader('Content-Type', 'application/json');
+        });
+
+
+        $group->get('/files/{fileName}', function (Request $request, Response $response, array $args) {
+            // Извлекаем имя файла из URL
+            $fileName = $args['fileName'];
+
+            // Формируем путь к файлу
+            $filePath = __DIR__ . '/files/' . $fileName;
+
+            if (file_exists($filePath)) {
+                // Открываем файл для чтения
+                $fileStream = fopen($filePath, 'rb');
+                $response = $response->withBody(new Stream($fileStream));
+                return $response->withHeader('Content-Type', 'audio/mpeg')
+                    ->withHeader('Content-Disposition', 'inline; filename="' . basename($filePath) . '"');
+            } else {
+                // Если файл не найден, возвращаем 404
+                $response->getBody()->write('File not found');
+                return $response->withStatus(404);
+            }
         });
     });
     // Обработчик ошибок
