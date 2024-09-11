@@ -19,7 +19,7 @@
 
         $group->get('/tracks', function (Request $request, Response $response, $args) {
             $tracks = [
-                ["id" => "track1", "name" => "Трек 1"],
+                ["id" => "DaftPunk_OneMoreTime", "name" => "Daft Punk - One More Time"],
 //                ["id" => "track2", "name" => "Трек 2"],
                 // Добавьте другие треки по необходимости
             ];
