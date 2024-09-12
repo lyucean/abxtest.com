@@ -32,7 +32,8 @@ function t(key) {
 
 // Функция для получения URL аудио файла
 function getAudioUrl(trackId, quality) {
-    return `${API_DOMAIN}/api/files/${trackId}_${quality}.mp3`;
+    const extension = quality === 'wav' ? '.wav' : '.mp3';
+    return `${API_DOMAIN}/files/${trackId}_${quality}${extension}`;
 }
 
 // Функция для выбора случайного трека
@@ -94,20 +95,23 @@ function renderTestCard() {
                         <h2 class="card-title mb-4 text-center">${t('currentTrack')} ${cardNumber}</h2>
                         <div class="audio-block mb-4">
                             <h3 class="h5 mb-3">${t('audioA')} (${currentQuality})</h3>
-                            <audio id="audio-a" class="custom-audio-player" controls src="${getAudioUrl(currentTrack.id, currentQuality)}">
-                                Your browser does not support the audio element.
+                            <audio id="audio-a" class="custom-audio-player" controls>
+                                <source src="${getAudioUrl(currentTrack.id, currentQuality)}" type="audio/mpeg">
+                                ${t('browserDoesNotSupport')}
                             </audio>
                         </div>
                         <div class="audio-block mb-4">
-                            <h3 class="h5 mb-3">${t('audioB')} (FLAC)</h3>
-                            <audio id="audio-b" class="custom-audio-player" controls src="${getAudioUrl(currentTrack.id, 'flac')}">
-                                Your browser does not support the audio element.
+                            <h3 class="h5 mb-3">${t('audioB')} (lossless)</h3>
+                            <audio id="audio-b" class="custom-audio-player" controls>
+                                <source src="${getAudioUrl(currentTrack.id, 'wav')}" type="audio/wav">
+                                ${t('browserDoesNotSupport')}
                             </audio>
                         </div>
                         <div class="audio-block mb-4">
                             <h3 class="h5 mb-3">${t('audioX')}</h3>
-                            <audio id="audio-x" class="custom-audio-player" controls src="${xIsA ? getAudioUrl(currentTrack.id, currentQuality) : getAudioUrl(currentTrack.id, 'flac')}">
-                                Your browser does not support the audio element.
+                            <audio id="audio-x" class="custom-audio-player" controls>
+                                <source src="${xIsA ? getAudioUrl(currentTrack.id, currentQuality) : getAudioUrl(currentTrack.id, 'wav')}" type="${xIsA ? 'audio/mpeg' : 'audio/wav'}">
+                                ${t('browserDoesNotSupport')}
                             </audio>
                         </div>
                         <div class="d-flex justify-content-between mb-4">
@@ -121,6 +125,7 @@ function renderTestCard() {
                 </div>
             `;
 }
+
 
 // Функция для рендеринга карточки загрузки
 function renderLoadingCard() {
@@ -141,7 +146,7 @@ function renderCompleteCard() {
     let resultsList = testResults.map((result, index) => `
                 <li class="list-group-item">
                     Test ${index + 1}: ${t(result.isCorrect ? 'correct' : (result.choice === 'Unknown' ? 'unknown' : 'incorrect'))}
-                    <br>${t('comparedFormats')} ${result.quality} vs FLAC
+                    <br>${t('comparedFormats')} ${result.quality} vs Lossless
                 </li>
             `).join('');
 
@@ -193,8 +198,8 @@ function handleChoice(choice) {
 
     $.when(
         $.get(getAudioUrl(nextTrack.id, currentQuality)).always(updateProgress),
-        $.get(getAudioUrl(nextTrack.id, 'flac')).always(updateProgress),
-        $.get(getAudioUrl(nextTrack.id, nextXIsA ? currentQuality : 'flac')).always(updateProgress)
+        $.get(getAudioUrl(nextTrack.id, 'wav')).always(updateProgress),
+        $.get(getAudioUrl(nextTrack.id, nextXIsA ? currentQuality : 'wav')).always(updateProgress)
     ).always(() => {
         const isCorrect = (choice === 'A' && xIsA) || (choice === 'B' && !xIsA);
 
@@ -314,10 +319,5 @@ $(document).ready(function() {
     });
     $(document).on('click', '.language-btn', function() {
         changeLanguage($(this).data('lang'));
-    });
-    $(document).on('play', 'audio', function() {
-        $('audio').not(this).each(function(index, audio) {
-            audio.pause();
-        });
     });
 });
