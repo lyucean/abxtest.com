@@ -3,7 +3,7 @@
 const qualities = ['96kbps', '128kbps', '256kbps', '320kbps'];
 
 // API домен (локальный или продакшн)
-const API_DOMAIN = 'https://abxtest.com/'; // Можно изменить на 'https://abxtest.com/'
+const API_DOMAIN = process.env.API_DOMAIN || 'https://abxtest.com/';
 
 // ---------------------------------------------------------
 // Глобальные переменные состояния для управления тестом

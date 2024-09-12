@@ -25,6 +25,11 @@ jobs:
           port: ${{ secrets.PORT }}
           script: mkdir -p /home/user/abxtest.com
 
+      - name: "Заполнение переменных среды"
+        run: |
+          echo "API_DOMAIN=https://abxtest.com/" >> .env
+          echo "ENVIRONMENT=Production" >> .env
+
       - name: Copy docker-compose.yml to remote server
         uses: appleboy/scp-action@master
         with:

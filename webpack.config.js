@@ -4,7 +4,7 @@ const FileManagerPlugin = require('filemanager-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const webpack = require('webpack');
-let fs = require('fs');
+const Dotenv = require('dotenv-webpack');
 
 const base_template = path.join(__dirname, 'frontend', 'index.html'); // базовый шаблон
 
@@ -63,7 +63,10 @@ module.exports = {
       $: 'jquery',
       jQuery: 'jquery',
       'window.jQuery': 'jquery'
-    })
+    }),
+    new Dotenv({
+      path: './.env', // Путь к вашему .env файлу
+    }),
   ],
   devServer: {
     watchFiles: path.join(__dirname, 'frontend'),

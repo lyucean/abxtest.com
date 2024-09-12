@@ -11,9 +11,11 @@ Platform for ABX Audio Testing https://abxtest.com
 - `npm i -D mini-css-extract-plugin` извлечение CSS из файлов .js
 - `npm i -D favicons favicons-webpack-plugin` добавляет favicons
 - `npm i jquery` добавляет jquery
+- `npm i dotenv dotenv-webpack` добавляет .env в проект
 
 
 
 - Сборка проекта - `webpack --mode production`
 - Поднять дев - `webpack serve --open --mode development`
 - Поднять мок для разработки `make mock`
+- Поднять бек - `make init`
