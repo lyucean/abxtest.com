@@ -1,10 +1,12 @@
+// ---------------------------------------------------------
 // Определение качества аудио
 const qualities = ['96kbps', '128kbps', '256kbps', '320kbps'];
 
-// API домен
-const API_DOMAIN = 'https://abxtest.com/';
+// API домен (локальный или продакшн)
+const API_DOMAIN = 'http://localhost/'; // Можно изменить на 'https://abxtest.com/'
 
-// Глобальные переменные состояния
+// ---------------------------------------------------------
+// Глобальные переменные состояния для управления тестом
 let isStarted = false;
 let currentQuality = '96kbps';
 let consecutiveCorrect = 0;
@@ -15,78 +17,69 @@ let xIsA = Math.random() < 0.5;
 let cardNumber = 1;
 let isLoading = false;
 let currentTrack = '';
-let tracks = []; // Будет заполнено данными из API
-let currentLanguage = 'ru'; // Текущий язык (по умолчанию русский)
+let tracks = []; // Треки, которые будут загружены из API
+let currentLanguage = 'ru'; // Язык по умолчанию — русский
 let testResults = []; // Массив для хранения результатов тестов
 let maxDiscernibleQuality = '96kbps'; // Максимально различимое качество
 
-
-// подгрузим доступные языки
+// ---------------------------------------------------------
+// Подгружаем доступные языки
 import { translations } from './translations.js';
 
+// ---------------------------------------------------------
 // Функция для получения перевода
 function t(key) {
     return translations[currentLanguage][key] || key;
 }
 
-
+// ---------------------------------------------------------
 // Функция для получения URL аудио файла
 function getAudioUrl(trackId, quality) {
     const extension = quality === 'wav' ? '.wav' : '.mp3';
     return `${API_DOMAIN}/files/${trackId}_${quality}${extension}`;
 }
 
+// ---------------------------------------------------------
 // Функция для выбора случайного трека
 function selectRandomTrack() {
     const randomIndex = Math.floor(Math.random() * tracks.length);
     return tracks[randomIndex];
 }
 
+// ---------------------------------------------------------
 // Функция для рендеринга начальной карточки
 function renderStartCard() {
     return `
-                <div class="card">
-                    <div class="card-body text-center">
-                        <br/>
-                        <br/>
-                        <br/>
-                        <h2 class="card-title mb-4">${t('title')}</h2>
-                        <br/>
-                        <div class="d-grid gap-2 col-sm-6 col-12 mx-auto">
-                            <button id="startButton" class="btn btn-primary btn-lg">
-                                ${t('start')}
-                            </button>
-                        </div>
-                        <br/>
-                        <br/>
-                        <div class="d-grid gap-2 col-sm-2 col-6 mx-auto">
-                            <button id="faqButton" class="btn btn-outline-secondary ">
-                                ${t('faq')}
-                            </button>
-                        </div>
-                        <br/>
-                        <br/>
-                        <br/>
-                    </div>
+        <div class="card">
+            <div class="card-body text-center">
+                <br/><h2 class="card-title mb-4">${t('title')}</h2>
+                <div class="d-grid gap-2 col-sm-6 col-12 mx-auto">
+                    <button id="startButton" class="btn btn-primary btn-lg">${t('start')}</button>
                 </div>
-            `;
+                <br/>
+                <div class="d-grid gap-2 col-sm-2 col-6 mx-auto">
+                    <button id="faqButton" class="btn btn-outline-secondary">${t('faq')}</button>
+                </div>
+                <br/>
+            </div>
+        </div>
+    `;
 }
 
-// Функция для рендеринга FAQ
+// ---------------------------------------------------------
+// Функция для рендеринга карточки с FAQ
 function renderFAQ() {
-    //<p>${t('faqContent')}</p>
     return `
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="card-title mb-4">${t('faq')}</h2>
-                        <button id="backButton" class="btn btn-primary">
-                            ${t('start')}
-                        </button>
-                    </div>
-                </div>
-            `;
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title mb-4">${t('faq')}</h2>
+                <button id="backButton" class="btn btn-primary">${t('start')}</button>
+            </div>
+        </div>
+    `;
 }
 
+// ---------------------------------------------------------
 // Функция для рендеринга карточки теста
 function renderTestCard() {
     return `
@@ -109,8 +102,9 @@ function renderTestCard() {
 
                 <p class="text-center">
                     <small class="text-secondary">${t('currentQuality')}</small> ${currentQuality}
-                    <small class="text-secondary">${t('currentTrack')}</small> <br class="d-block d-sm-none"/> ${currentTrack.name}
+                    <small class="text-secondary">${t('currentTrack')}</small><br class="d-block d-sm-none"/> ${currentTrack.name}
                 </p>
+                
                 <div class="d-flex justify-content-between mb-4">
                     <button class="btn btn-success choice-btn" data-choice="A">${t('choiceA')}</button>
                     <button class="btn btn-primary choice-btn" data-choice="B">${t('choiceB')}</button>
@@ -121,65 +115,64 @@ function renderTestCard() {
     `;
 }
 
+// ---------------------------------------------------------
 // Функция для рендеринга пользовательского аудиоплеера
 function renderCustomAudioPlayer(id, audioUrl) {
     return `
         <div id="${id}-player" class="custom-audio-player d-flex align-items-center">
             <button id="${id}-play-pause" class="btn btn-dark me-3">Play</button>
-            <input id="${id}-slider" type="range" class=" bg-info flex-grow-1 me-3" value="0" min="0" max="100" step="1">
+            <input id="${id}-slider" type="range" class="bg-info flex-grow-1 me-3" value="0" min="0" max="100" step="1">
             <span id="${id}-time" class="text-black">0:00 / 0:00</span>
         </div>
         <audio id="${id}" style="display:none;">
-            <source src="${audioUrl}" type="audio/mpeg">
-            ${t('browserDoesNotSupport')}
+            <source src="${audioUrl}" type="audio/mpeg">${t('browserDoesNotSupport')}
         </audio>
     `;
 }
 
+// ---------------------------------------------------------
 // Функция для рендеринга карточки загрузки
 function renderLoadingCard() {
     return `
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="card-title mb-4">${t('loading')}</h2>
-                        <div class="progress">
-                            <div id="loadingProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0"></div>
-                        </div>
-                    </div>
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title mb-4">${t('loading')}</h2>
+                <div class="progress">
+                    <div id="loadingProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0"></div>
                 </div>
-            `;
+            </div>
+        </div>
+    `;
 }
 
+// ---------------------------------------------------------
 // Функция для рендеринга карточки завершения теста
 function renderCompleteCard() {
     let resultsList = testResults.map((result, index) => `
-                <li class="list-group-item">
-                    Test ${index + 1}: ${t(result.isCorrect ? 'correct' : (result.choice === 'Unknown' ? 'unknown' : 'incorrect'))}
-                    <br>${t('comparedFormats')} ${result.quality} vs Lossless
-                </li>
-            `).join('');
+        <li class="list-group-item">
+            Test ${index + 1}: ${t(result.isCorrect ? 'correct' : (result.choice === 'Unknown' ? 'unknown' : 'incorrect'))}
+            <br>${t('comparedFormats')} ${result.quality} vs Lossless
+        </li>
+    `).join('');
 
     return `
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="card-title mb-4">${t('completed')}</h2>
-                        <p class="mb-4">${finalResult}</p>
-                        <p>${t('maxDiscernibleQuality')} ${maxDiscernibleQuality}</p>
-                        <h3>${t('testResults')}</h3>
-                        <ul class="list-group mb-4">
-                            ${resultsList}
-                        </ul>
-                        <div class="text-center">
-                            <button id="resetButton" class="btn btn-primary btn-lg">
-                                ${t('restart')}
-                            </button>
-                        </div>
-                    </div>
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title mb-4">${t('completed')}</h2>
+                <p class="mb-4">${finalResult}</p>
+                <p>${t('maxDiscernibleQuality')} ${maxDiscernibleQuality}</p>
+                <h3>${t('testResults')}</h3>
+                <ul class="list-group mb-4">${resultsList}</ul>
+                <div class="text-center">
+                    <button id="resetButton" class="btn btn-primary btn-lg">${t('restart')}</button>
                 </div>
-            `;
+            </div>
+        </div>
+    `;
 }
 
-// Обработчик начала теста
+// ---------------------------------------------------------
+// Функция для обработки начала теста
 function handleStart() {
     isStarted = true;
     currentTrack = selectRandomTrack();
@@ -187,12 +180,12 @@ function handleStart() {
     render();
 }
 
-// Обработчик выбора пользователя
+// ---------------------------------------------------------
+// Функция для обработки выбора пользователя
 function handleChoice(choice) {
     isLoading = true;
     render();
 
-    // Загрузка аудио файлов для следующего теста
     let loadedFiles = 0;
     const filesToLoad = 3; // A, B, и X аудио файлы
 
@@ -233,7 +226,6 @@ function handleChoice(choice) {
         currentTrack = nextTrack;
         xIsA = nextXIsA;
 
-        // Проверка на завершение теста или переход к следующему качеству
         if (consecutiveCorrect === 2) {
             const currentIndex = qualities.indexOf(currentQuality);
             if (currentIndex < qualities.length - 1) {
@@ -255,7 +247,8 @@ function handleChoice(choice) {
     });
 }
 
-// Функция сброса теста
+// ---------------------------------------------------------
+// Функция для сброса теста
 function resetTest() {
     isStarted = false;
     currentQuality = '96kbps';
@@ -272,6 +265,7 @@ function resetTest() {
     render();
 }
 
+// ---------------------------------------------------------
 // Основная функция рендеринга
 function render() {
     const $content = $('#content');
@@ -285,13 +279,12 @@ function render() {
         $content.html(renderLoadingCard());
     } else {
         $content.html(renderTestCard());
-
-        // Инициализация аудиоплееров только после рендеринга карточки теста
-        initializeCustomAudioPlayers();
+        initializeCustomAudioPlayers(); // Инициализация аудиоплееров после рендеринга
     }
 }
 
-// Функция для загрузки списка треков
+// ---------------------------------------------------------
+// Функция для загрузки списка треков с API
 function loadTracks() {
     return $.ajax({
         url: `${API_DOMAIN}/api/tracks`,
@@ -300,12 +293,14 @@ function loadTracks() {
     });
 }
 
+// ---------------------------------------------------------
 // Функция для изменения языка
 function changeLanguage(lang) {
     currentLanguage = lang;
     render();
 }
 
+// ---------------------------------------------------------
 // Функция для инициализации всех аудиоплееров
 function initializeCustomAudioPlayers() {
     const audioElements = ['audio-a', 'audio-b', 'audio-x'];
@@ -316,12 +311,14 @@ function initializeCustomAudioPlayers() {
         const slider = document.getElementById(`${audioId}-slider`);
         const timeDisplay = document.getElementById(`${audioId}-time`);
 
-        // Проверяем существование аудиоэлемента и связанных элементов управления
         if (audio && playPauseButton && slider && timeDisplay) {
-            // Обработчик Play/Pause
+            $(playPauseButton).off('click');
+            $(audio).off('timeupdate');
+            $(slider).off('input');
+
             playPauseButton.addEventListener('click', () => {
                 if (audio.paused) {
-                    pauseOtherPlayers(audioId); // Остановить все остальные плееры
+                    pauseOtherPlayers(audioId);
                     audio.play();
                     playPauseButton.textContent = 'Pause';
                 } else {
@@ -330,25 +327,18 @@ function initializeCustomAudioPlayers() {
                 }
             });
 
-            // Обновление прогресса трека и ползунка
             audio.addEventListener('timeupdate', () => {
-                const progress = (audio.currentTime / audio.duration) * 100;
-                slider.value = progress;
-
-                // Обновляем текущее время и общую продолжительность
+                slider.value = (audio.currentTime / audio.duration) * 100;
                 timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
             });
 
-            // Обработка окончания трека
             audio.addEventListener('ended', () => {
                 playPauseButton.textContent = 'Play';
                 slider.value = 0;
             });
 
-            // Обработка перемещения ползунка
             slider.addEventListener('input', () => {
-                const seekTime = (slider.value / 100) * audio.duration;
-                audio.currentTime = seekTime;
+                audio.currentTime = (slider.value / 100) * audio.duration;
             });
         } else {
             console.error(`Element(s) not found for ${audioId}`);
@@ -356,13 +346,15 @@ function initializeCustomAudioPlayers() {
     });
 }
 
-// Функция для форматирования времени в мм:сс
+// ---------------------------------------------------------
+// Функция для форматирования времени в формате мм:сс
 function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
 
+// ---------------------------------------------------------
 // Функция для остановки всех других плееров, кроме текущего
 function pauseOtherPlayers(currentAudioId) {
     const audioElements = ['audio-a', 'audio-b', 'audio-x'];
@@ -380,9 +372,9 @@ function pauseOtherPlayers(currentAudioId) {
     });
 }
 
+// ---------------------------------------------------------
 // Инициализация приложения после загрузки DOM
 $(document).ready(function() {
-    // Загрузка списка треков
     loadTracks().done(function(data) {
         tracks = data;
         render();
@@ -391,30 +383,18 @@ $(document).ready(function() {
         $('#content').html(`<div class="alert alert-danger">${t('failedToLoad')}</div>`);
     });
 
-    // Привязка обработчиков событий
-    $(document).on('click', '#startButton', handleStart);
-    $(document).on('click', '#faqButton', function() {
+    $(document).off('click', '#startButton').on('click', '#startButton', handleStart);
+    $(document).off('click', '#faqButton').on('click', '#faqButton', function() {
         $('#content').html(renderFAQ());
     });
-    $(document).on('click', '#backButton', function() {
+    $(document).off('click', '#backButton').on('click', '#backButton', function() {
         render();
     });
-    $(document).on('click', '#resetButton', resetTest);
-    $(document).on('click', '.choice-btn', function() {
+    $(document).off('click', '#resetButton').on('click', '#resetButton', resetTest);
+    $(document).off('click', '.choice-btn').on('click', '.choice-btn', function() {
         handleChoice($(this).data('choice'));
     });
-    $(document).on('click', '.language-btn', function() {
+    $(document).off('click', '.language-btn').on('click', '.language-btn', function() {
         changeLanguage($(this).data('lang'));
     });
-
-    // После рендеринга карточки инициализируем плееры
-    $(document).on('click', '#startButton', handleStart);
-    $(document).on('click', '.choice-btn', function() {
-        handleChoice($(this).data('choice'));
-    });
-
-    // Инициализируем кастомные аудиоплееры после рендеринга
-    initializeCustomAudioPlayers();
 });
-
-
