@@ -47,31 +47,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: base_template,
       filename: 'index.html',
-      content: fs.readFileSync(path.join(__dirname, 'frontend/includes', 'home.html')),
-    }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'frontend/includes', 'faq.html'),
-      filename: 'faq.html',
-      chunks: [],
-      inject: false
-    }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'frontend/includes', 'home.html'),
-      filename: 'home.html',
-      chunks: [],
-      inject: false
-    }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'frontend/includes', 'test.html'),
-      filename: 'test.html',
-      chunks: [],
-      inject: false
-    }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'frontend/includes', 'result.html'),
-      filename: 'result.html',
-      chunks: [],
-      inject: false
     }),
     new FileManagerPlugin({
       events: {
