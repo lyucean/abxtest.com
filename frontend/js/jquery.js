@@ -3,7 +3,7 @@
 const qualities = ['96kbps', '128kbps', '256kbps', '320kbps'];
 
 // API домен (локальный или продакшн)
-const API_DOMAIN = 'http://localhost/'; // Можно изменить на 'https://abxtest.com/'
+const API_DOMAIN = 'https://abxtest.com/'; // Можно изменить на 'https://abxtest.com/'
 
 // ---------------------------------------------------------
 // Глобальные переменные состояния для управления тестом
@@ -137,6 +137,9 @@ function renderLoadingCard() {
         <div class="card">
             <div class="card-body">
                 <h2 class="card-title mb-4">${t('loading')}</h2>
+                <br/>
+                <br/>
+                <br/>
                 <div class="progress">
                     <div id="loadingProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0"></div>
                 </div>
@@ -183,69 +186,99 @@ function handleStart() {
 // ---------------------------------------------------------
 // Функция для обработки выбора пользователя
 function handleChoice(choice) {
+    // Устанавливаем флаг загрузки и обновляем интерфейс
     isLoading = true;
     render();
 
-    let loadedFiles = 0;
-    const filesToLoad = 3; // A, B, и X аудио файлы
+    let loadedFiles = 0; // Счетчик загруженных файлов
+    const filesToLoad = 2; // Загружаем только два файла (A и B)
+    const minLoadTime = 2000; // Минимальное время загрузки в миллисекундах (2 секунды)
+    const startTime = Date.now(); // Сохраняем текущее время, когда начинается загрузка
 
+    // Функция для обновления прогресса загрузки
     function updateProgress() {
-        loadedFiles++;
-        const progress = (loadedFiles / filesToLoad) * 100;
-        $('#loadingProgress').css('width', `${progress}%`).attr('aria-valuenow', progress);
+        loadedFiles++; // Увеличиваем счетчик загруженных файлов
+        const progress = (loadedFiles / filesToLoad) * 100; // Вычисляем процент загрузки
+        $('#loadingProgress').css('width', `${progress}%`).attr('aria-valuenow', progress); // Обновляем прогресс-бар
     }
 
+    // Выбираем случайный трек для следующего шага
     const nextTrack = selectRandomTrack();
+
+    // Определяем, будет ли трек X являться треком A
     const nextXIsA = Math.random() < 0.5;
 
-    $.when(
-        $.get(getAudioUrl(nextTrack.id, currentQuality)).always(updateProgress),
-        $.get(getAudioUrl(nextTrack.id, 'wav')).always(updateProgress),
-        $.get(getAudioUrl(nextTrack.id, nextXIsA ? currentQuality : 'wav')).always(updateProgress)
-    ).always(() => {
-        const isCorrect = (choice === 'A' && xIsA) || (choice === 'B' && !xIsA);
+    // Загружаем два файла: трек A в MP3 формате и трек B в WAV формате
+    const trackAPromise = $.get(getAudioUrl(nextTrack.id, currentQuality)).always(updateProgress);
+    const trackBPromise = $.get(getAudioUrl(nextTrack.id, 'wav')).always(updateProgress);
 
-        testResults.push({
-            isCorrect: isCorrect,
-            choice: choice,
-            quality: currentQuality
-        });
+    // Дожидаемся загрузки обоих файлов
+    $.when(trackAPromise, trackBPromise).then((trackAResponse, trackBResponse) => {
+        const actualLoadTime = Date.now() - startTime; // Вычисляем фактическое время загрузки
+        const remainingTime = minLoadTime - actualLoadTime; // Рассчитываем оставшееся время, чтобы загрузка длилась минимум 2 секунды
 
-        if (choice !== 'Unknown') {
-            if (isCorrect) {
-                consecutiveCorrect++;
-                consecutiveIncorrect = 0;
-                maxDiscernibleQuality = currentQuality;
-            } else {
-                consecutiveIncorrect++;
-                consecutiveCorrect = 0;
-            }
-        }
-
-        cardNumber++;
-        currentTrack = nextTrack;
-        xIsA = nextXIsA;
-
-        if (consecutiveCorrect === 2) {
-            const currentIndex = qualities.indexOf(currentQuality);
-            if (currentIndex < qualities.length - 1) {
-                currentQuality = qualities[currentIndex + 1];
-            } else {
-                finalResult = t('canHearDifference');
-                isTestComplete = true;
-            }
-            consecutiveCorrect = 0;
-        }
-
-        if (consecutiveIncorrect === 2) {
-            finalResult = t('cannotHearDifference').replace('{quality}', currentQuality);
-            isTestComplete = true;
-        }
-
-        isLoading = false;
-        render();
+        // Если фактическое время меньше минимального, ждем оставшееся время
+        setTimeout(() => {
+            // После завершения минимального времени обработки продолжаем логику теста
+            processTestResult(choice, nextTrack, nextXIsA);
+        }, Math.max(remainingTime, 0)); // Ждем только если нужно
     });
 }
+
+// ---------------------------------------------------------
+// Функция для обработки результатов теста
+function processTestResult(choice, nextTrack, nextXIsA) {
+    // Проверяем, был ли выбор пользователя правильным
+    const isCorrect = (choice === 'A' && xIsA) || (choice === 'B' && !xIsA);
+
+    // Добавляем результаты текущего теста в массив
+    testResults.push({
+        isCorrect: isCorrect, // Верен ли выбор пользователя
+        choice: choice, // Какой был сделан выбор
+        quality: currentQuality // Качество аудио, которое сейчас тестируется
+    });
+
+    // Обновляем состояние правильных/неправильных ответов
+    if (choice !== 'Unknown') {
+        if (isCorrect) {
+            consecutiveCorrect++; // Увеличиваем счетчик правильных ответов
+            consecutiveIncorrect = 0; // Сбрасываем счетчик неправильных ответов
+            maxDiscernibleQuality = currentQuality; // Обновляем максимальное различимое качество
+        } else {
+            consecutiveIncorrect++; // Увеличиваем счетчик неправильных ответов
+            consecutiveCorrect = 0; // Сбрасываем счетчик правильных ответов
+        }
+    }
+
+    // Переходим к следующему треку
+    cardNumber++; // Увеличиваем номер текущей карточки теста
+    currentTrack = nextTrack; // Устанавливаем следующий трек
+    xIsA = nextXIsA; // Устанавливаем, является ли трек X треком A
+
+    // Если дважды подряд был правильный ответ, повышаем качество теста
+    if (consecutiveCorrect === 2) {
+        const currentIndex = qualities.indexOf(currentQuality); // Определяем текущее качество
+        if (currentIndex < qualities.length - 1) {
+            currentQuality = qualities[currentIndex + 1]; // Переходим на следующее качество
+        } else {
+            finalResult = t('canHearDifference'); // Пользователь может различить все качества
+            isTestComplete = true; // Завершаем тест
+        }
+        consecutiveCorrect = 0; // Сбрасываем счетчик правильных ответов
+    }
+
+    // Если дважды подряд был неправильный ответ, завершаем тест
+    if (consecutiveIncorrect === 2) {
+        finalResult = t('cannotHearDifference').replace('{quality}', currentQuality); // Сообщаем пользователю, что он не различает качество
+        isTestComplete = true; // Завершаем тест
+    }
+
+    // Снимаем флаг загрузки и обновляем интерфейс
+    isLoading = false;
+    render(); // Обновляем интерфейс после завершения процесса
+}
+
+
 
 // ---------------------------------------------------------
 // Функция для сброса теста
