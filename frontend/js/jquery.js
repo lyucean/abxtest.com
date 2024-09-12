@@ -126,9 +126,7 @@ function renderCustomAudioPlayer(id, audioUrl) {
     return `
         <div id="${id}-player" class="custom-audio-player d-flex align-items-center">
             <button id="${id}-play-pause" class="btn btn-dark me-3">Play</button>
-            <div class="progress flex-grow-1 me-3" style="height: 8px;">
-                <div id="${id}-progress" class="progress-bar" role="progressbar" style="width: 0" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
+            <input id="${id}-slider" type="range" class=" bg-info flex-grow-1 me-3" value="0" min="0" max="100" step="1">
             <span id="${id}-time" class="text-black">0:00 / 0:00</span>
         </div>
         <audio id="${id}" style="display:none;">
@@ -275,8 +273,6 @@ function resetTest() {
 }
 
 // Основная функция рендеринга
-// Основная функция рендеринга
-// Основная функция рендеринга
 function render() {
     const $content = $('#content');
     $content.empty();
@@ -294,8 +290,6 @@ function render() {
         initializeCustomAudioPlayers();
     }
 }
-
-
 
 // Функция для загрузки списка треков
 function loadTracks() {
@@ -319,11 +313,11 @@ function initializeCustomAudioPlayers() {
     audioElements.forEach(audioId => {
         const audio = document.getElementById(audioId);
         const playPauseButton = document.getElementById(`${audioId}-play-pause`);
-        const progressBar = document.getElementById(`${audioId}-progress`);
+        const slider = document.getElementById(`${audioId}-slider`);
         const timeDisplay = document.getElementById(`${audioId}-time`);
 
         // Проверяем существование аудиоэлемента и связанных элементов управления
-        if (audio && playPauseButton && progressBar && timeDisplay) {
+        if (audio && playPauseButton && slider && timeDisplay) {
             // Обработчик Play/Pause
             playPauseButton.addEventListener('click', () => {
                 if (audio.paused) {
@@ -336,10 +330,10 @@ function initializeCustomAudioPlayers() {
                 }
             });
 
-            // Обновление прогресса трека
+            // Обновление прогресса трека и ползунка
             audio.addEventListener('timeupdate', () => {
                 const progress = (audio.currentTime / audio.duration) * 100;
-                progressBar.style.width = `${progress}%`;
+                slider.value = progress;
 
                 // Обновляем текущее время и общую продолжительность
                 timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
@@ -348,6 +342,13 @@ function initializeCustomAudioPlayers() {
             // Обработка окончания трека
             audio.addEventListener('ended', () => {
                 playPauseButton.textContent = 'Play';
+                slider.value = 0;
+            });
+
+            // Обработка перемещения ползунка
+            slider.addEventListener('input', () => {
+                const seekTime = (slider.value / 100) * audio.duration;
+                audio.currentTime = seekTime;
             });
         } else {
             console.error(`Element(s) not found for ${audioId}`);
@@ -361,6 +362,7 @@ function formatTime(seconds) {
     const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
+
 // Функция для остановки всех других плееров, кроме текущего
 function pauseOtherPlayers(currentAudioId) {
     const audioElements = ['audio-a', 'audio-b', 'audio-x'];
