@@ -13,7 +13,7 @@
     // Группа маршрутов с префиксом /api
     $app->group('/api', function ($group) {
         $group->get('/test', function (Request $request, Response $response, $args) {
-            $response->getBody()->write("Hello test!");
+            $response->getBody()->write("Hello api!");
             return $response;
         });
 
@@ -26,27 +26,6 @@
 
             $response->getBody()->write(json_encode($tracks));
             return $response->withHeader('Content-Type', 'application/json');
-        });
-
-
-        $group->get('/files/{fileName}', function (Request $request, Response $response, array $args) {
-            // Извлекаем имя файла из URL
-            $fileName = $args['fileName'];
-
-            // Формируем путь к файлу
-            $filePath = __DIR__ . '/files/' . $fileName;
-
-            if (file_exists($filePath)) {
-                // Открываем файл для чтения
-                $fileStream = fopen($filePath, 'rb');
-                $response = $response->withBody(new Stream($fileStream));
-                return $response->withHeader('Content-Type', 'audio/mpeg')
-                    ->withHeader('Content-Disposition', 'inline; filename="' . basename($filePath) . '"');
-            } else {
-                // Если файл не найден, возвращаем 404
-                $response->getBody()->write('File not found');
-                return $response->withStatus(404);
-            }
         });
     });
     // Обработчик ошибок
