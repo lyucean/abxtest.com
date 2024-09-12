@@ -57,8 +57,8 @@ function renderStartCard() {
                     <button id="startButton" class="btn btn-primary btn-lg">${t('start')}</button>
                 </div>
                 <br/>
-                <div class="d-grid gap-2 col-sm-2 col-6 mx-auto">
-                    <button id="faqButton" class="btn btn-outline-secondary">${t('faq')}</button>
+                <div class="d-grid gap-2 col-sm-4 col-8 mx-auto">
+                    <button id="faqButton" class="btn btn-sm btn-outline-secondary">${t('faq')}</button>
                 </div>
                 <br/>
             </div>
@@ -72,8 +72,10 @@ function renderFAQ() {
     return `
         <div class="card">
             <div class="card-body">
-                <h2 class="card-title mb-4">${t('faq')}</h2>
-                <button id="backButton" class="btn btn-primary">${t('start')}</button>
+                <h2 class="card-title mb-4 text-center">${t('faq')}</h2>
+                ${t('faqContent')}
+                <br/>
+                <p class="text-center"><button id="backButton" class="btn btn-primary">${t('start')}</button></p>
             </div>
         </div>
     `;
@@ -136,13 +138,16 @@ function renderLoadingCard() {
     return `
         <div class="card">
             <div class="card-body">
-                <h2 class="card-title mb-4">${t('loading')}</h2>
                 <br/>
                 <br/>
+                <h2 class="card-title mb-4 text-center">${t('loading')}</h2>
                 <br/>
                 <div class="progress">
                     <div id="loadingProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0"></div>
                 </div>
+                <br/>
+                <br/>
+                <br/>
             </div>
         </div>
     `;
@@ -151,19 +156,32 @@ function renderLoadingCard() {
 // ---------------------------------------------------------
 // Функция для рендеринга карточки завершения теста
 function renderCompleteCard() {
-    let resultsList = testResults.map((result, index) => `
-        <li class="list-group-item">
-            Test ${index + 1}: ${t(result.isCorrect ? 'correct' : (result.choice === 'Unknown' ? 'unknown' : 'incorrect'))}
-            <br>${t('comparedFormats')} ${result.quality} vs Lossless
-        </li>
-    `).join('');
+    let resultsList = testResults.map((result, index) => {
+        let statusBadge = '';
+
+        if (result.isCorrect) {
+            statusBadge = `<span class="badge rounded-pill alert-success">${t('correct')}</span>`;
+        } else if (result.choice === 'Unknown') {
+            statusBadge = t('unknown');
+        } else {
+            statusBadge = `<span class="badge rounded-pill alert-danger">${t('incorrect')}</span>`;
+        }
+
+        return `
+            <li class="list-group-item">
+                Test ${index + 1}: ${statusBadge}
+                <br>${t('comparedFormats')} ${result.quality} vs Lossless
+            </li>
+        `;
+    }).join('');
 
     return `
         <div class="card">
             <div class="card-body">
-                <h2 class="card-title mb-4">${t('completed')}</h2>
-                <p class="mb-4">${finalResult}</p>
-                <p>${t('maxDiscernibleQuality')} ${maxDiscernibleQuality}</p>
+                <h2 class="card-title mb-4 text-center">${t('completed')}</h2>
+                <p class="mb-4 lead">${finalResult}
+                    <br/>
+                    ${t('maxDiscernibleQuality')} <b>${maxDiscernibleQuality}</b></p>
                 <h3>${t('testResults')}</h3>
                 <ul class="list-group mb-4">${resultsList}</ul>
                 <div class="text-center">
@@ -173,6 +191,7 @@ function renderCompleteCard() {
         </div>
     `;
 }
+
 
 // ---------------------------------------------------------
 // Функция для обработки начала теста
