@@ -13,16 +13,16 @@ module.exports = {
   entry: {
     main: {
       import: path.join(__dirname, 'frontend/js', 'index.js'),
-      filename: '[name].[contenthash].index.js',
+      filename: '[contenthash].[name].js',
     },
     translations: {
       import: path.join(__dirname, 'frontend/js', 'translations.js'),
-      filename: '[name].[contenthash].translations.js',
+      filename: '[contenthash].[name].js',
     },
     jquery: {
       dependOn: 'translations',
       import: path.join(__dirname, 'frontend/js', 'jquery.js'),
-      filename: '[name].[contenthash].jquery.js',
+      filename: '[contenthash].[name].js',
     },
   },
   output: {
@@ -55,7 +55,7 @@ module.exports = {
       },
     }),
     new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css',
+      filename: '[contenthash].[name].css',
     }),
     new FaviconsWebpackPlugin(path.join('frontend/assets/img', 'favicon.png')),
     // Подключение jQuery как глобальной переменной
