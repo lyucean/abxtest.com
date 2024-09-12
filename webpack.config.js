@@ -15,15 +15,14 @@ module.exports = {
       import: path.join(__dirname, 'frontend/js', 'index.js'),
       filename: '[name].[contenthash].index.js',
     },
+    translations: {
+      import: path.join(__dirname, 'frontend/js', 'translations.js'),
+      filename: '[name].[contenthash].translations.js',
+    },
     jquery: {
-      dependOn: 'jquery_helper',
+      dependOn: 'translations',
       import: path.join(__dirname, 'frontend/js', 'jquery.js'),
       filename: '[name].[contenthash].jquery.js',
-    },
-    jquery_helper: {
-      dependOn: 'main',
-      import: path.join(__dirname, 'frontend/js', 'jquery_helper.js'),
-      filename: '[name].[contenthash].jquery_helper.js',
     },
   },
   output: {

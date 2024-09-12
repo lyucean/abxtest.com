@@ -2,7 +2,7 @@
 const qualities = ['96kbps', '128kbps', '256kbps', '320kbps'];
 
 // API домен
-const API_DOMAIN = 'https://abxtest.com/';
+const API_DOMAIN = 'http://localhost/';
 
 // Глобальные переменные состояния
 let isStarted = false;
