@@ -20,10 +20,12 @@
         $group->get('/tracks', function (Request $request, Response $response, $args) {
             $tracks = [
                 ["id" => "DaftPunk_OneMoreTime", "name" => "Daft Punk - One More Time"],
-                ["id" => "Eminem_loseyourself", "name" => "Eminem - Lose Yourself"],
+                ["id" => "Eminem_LoseYourself", "name" => "Eminem - Lose Yourself"],
                 ["id" => "MarilynManson_SmellsLikeChildren", "name" => "Marilyn Manson - Smells Like Children"],
                 ["id" => "LinkinPark_Numb", "name" => "Linkin Park - Numb"],
                 ["id" => "LinkinPark_InTheEnd", "name" => "Linkin Park - In the End"],
+                ["id" => "Eminem_TheRealSlimShady", "name" => "Eminem - The Real Slim Shady"],
+                ["id" => "Queen_BohemianRhapsody", "name" => "Queen - Bohemian Rhapsody"],
             ];
 
             $response->getBody()->write(json_encode($tracks));
