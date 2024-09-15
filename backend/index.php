@@ -22,7 +22,8 @@
                 ["id" => "DaftPunk_OneMoreTime", "name" => "Daft Punk - One More Time"],
                 ["id" => "Eminem_loseyourself", "name" => "Eminem - Lose Yourself"],
                 ["id" => "MarilynManson_SmellsLikeChildren", "name" => "Marilyn Manson - Smells Like Children"],
-                // Добавьте другие треки по необходимости
+                ["id" => "LinkinPark_Numb", "name" => "Linkin Park - Numb"],
+                ["id" => "LinkinPark_InTheEnd", "name" => "Linkin Park - In the End"],
             ];
 
             $response->getBody()->write(json_encode($tracks));
