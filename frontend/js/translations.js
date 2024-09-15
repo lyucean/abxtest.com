@@ -1,7 +1,7 @@
 // translations.js
 export const translations = {
     ru: {
-        title: "ABX Аудио Тест",
+        title: "Добро пожаловать в тест качества аудио",
         start: "Начать тест",
         faq: "Как это работает?",
         loading: "Загрузка следующего теста...",
@@ -88,7 +88,7 @@ export const translations = {
 `
     },
     en: {
-        title: "ABX Audio Test",
+        title: "Welcome to the audio quality test",
         start: "Start Test",
         faq: "FAQ",
         loading: "Loading next test...",
@@ -176,7 +176,7 @@ export const translations = {
 
     },
     es: {
-        title: "Prueba de Audio ABX",
+        title: "Bienvenido a la prueba de calidad de audio",
         start: "Iniciar prueba",
         faq: "FAQ",
         loading: "Cargando la siguiente prueba...",
@@ -263,7 +263,7 @@ export const translations = {
 `
     },
     zh: {
-        title: "ABX 音频测试",
+        title: "欢迎来到音频质量测试",
         start: "开始测试",
         faq: "常见问题",
         loading: "加载下一次测试...",
@@ -350,7 +350,7 @@ export const translations = {
 `
     },
     de: {
-        title: "ABX Audio Test",
+        title: "Willkommen beim Audioqualitätstest",
         start: "Test starten",
         faq: "FAQ",
         loading: "Lade den nächsten Test...",
@@ -438,7 +438,7 @@ export const translations = {
 
     },
     fr: {
-        title: "Test Audio ABX",
+        title: "Bienvenue au test de qualité audio",
         start: "Démarrer le test",
         faq: "FAQ",
         loading: "Chargement du prochain test...",
