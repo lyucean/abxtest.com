@@ -21,6 +21,7 @@
             $tracks = [
                 ["id" => "DaftPunk_OneMoreTime", "name" => "Daft Punk - One More Time"],
                 ["id" => "Eminem_loseyourself", "name" => "Eminem - Lose Yourself"],
+                ["id" => "MarilynManson_SmellsLikeChildren", "name" => "Marilyn Manson - Smells Like Children"],
                 // Добавьте другие треки по необходимости
             ];
 
