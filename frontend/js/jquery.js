@@ -52,7 +52,9 @@ function renderStartCard() {
     return `
         <div class="card">
             <div class="card-body text-center">
-                <br/><h2 class="card-title mb-4">${t('title')}</h2>
+                <br/>
+                <br/>
+                <h1 class="fs-3 card-title mb-4">${t('title')}</h1>
                 <div class="d-grid gap-2 col-sm-6 col-12 mx-auto">
                     <button id="startButton" class="btn btn-primary btn-lg">${t('start')}</button>
                 </div>
@@ -60,6 +62,7 @@ function renderStartCard() {
                 <div class="d-grid gap-2 col-sm-4 col-8 mx-auto">
                     <button id="faqButton" class="btn btn-sm btn-outline-secondary">${t('faq')}</button>
                 </div>
+                <br/>
                 <br/>
             </div>
         </div>
@@ -234,7 +237,7 @@ function handleChoice(choice) {
     // Дожидаемся загрузки обоих файлов
     $.when(trackAPromise, trackBPromise).then((trackAResponse, trackBResponse) => {
         const actualLoadTime = Date.now() - startTime; // Вычисляем фактическое время загрузки
-        const remainingTime = minLoadTime - actualLoadTime; // Рассчитываем оставшееся время, чтобы загрузка длилась минимум 2 секунды
+        const remainingTime = minLoadTime - actualLoadTime; // Рассчитываем оставшееся время, чтобы загрузка длилась минимум minLoadTime/1000 секунды
 
         // Если фактическое время меньше минимального, ждем оставшееся время
         setTimeout(() => {
