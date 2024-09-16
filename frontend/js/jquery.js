@@ -18,7 +18,7 @@ let cardNumber = 1;
 let isLoading = false;
 let currentTrack = '';
 let tracks = []; // Треки, которые будут загружены из API
-let currentLanguage = 'ru'; // Язык по умолчанию — русский
+let currentLanguage = 'en'; // Язык по умолчанию — Английский
 let testResults = []; // Массив для хранения результатов тестов
 let maxDiscernibleQuality = '96kbps'; // Максимально различимое качество
 
