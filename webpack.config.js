@@ -50,13 +50,17 @@ module.exports = (env, argv) => {
                 events: {
                     onStart: {
                         delete: [
-                            { source: path.join(__dirname, 'dist', '*') }, // Если файл
+                            {
+                                source: path.join(__dirname, 'dist', '*')
+                            }, // Если файл
                         ],
                     },
                     onEnd: {
                         copy: [
-                            { source: path.join(__dirname, 'frontend/assets/img', 'og_image.jpg')
-                                , destination: path.join(__dirname, 'dist/assets', 'og_image.jpg') },
+                            {
+                                source: path.join(__dirname, 'frontend/assets/img', 'og_image.jpg')
+                                , destination: path.join(__dirname, 'dist/assets', 'og_image.jpg')
+                            },
                         ],
                     },
                 },
