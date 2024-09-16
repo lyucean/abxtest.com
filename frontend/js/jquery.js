@@ -89,9 +89,7 @@ function renderFAQ() {
 function renderTestCard() {
     return `
         <div class="card fade-in">
-            <div class="card-body">
-                <h2 class="card-title mb-4 text-left">${cardNumber}</h2>
-                
+            <div class="card-body"> 
                 <div class="audio-block mb-4 bg-success text-white">
                     <h3 class="h5 mb-3">${t('audioA')} (${currentQuality})</h3>
                     ${renderCustomAudioPlayer('audio-a', getAudioUrl(currentTrack.id, currentQuality))}
@@ -107,7 +105,9 @@ function renderTestCard() {
 
                 <p class="text-center">
                     <small class="text-secondary">${t('currentQuality')}</small> ${currentQuality}
-                    <small class="text-secondary">${t('currentTrack')}</small><br class="d-block d-sm-none"/> ${currentTrack.name}
+                    <br class="d-block d-lg-none"/>
+                    <small class="text-secondary">${t('currentTrack')}</small>
+                    <br class="d-block d-sm-none"/> ${currentTrack.name}
                 </p>
                 
                 <div class="d-flex justify-content-between mb-4">
@@ -115,6 +115,9 @@ function renderTestCard() {
                     <button class="btn btn-primary choice-btn" data-choice="B">${t('choiceB')}</button>
                     <button class="btn btn-warning choice-btn" data-choice="Unknown">${t('choiceUnknown')}</button>
                 </div>
+                
+        
+                <div class="text-secondary text-center"><small>${cardNumber}</small></div>
             </div>
         </div>
     `;

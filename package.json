@@ -4,9 +4,9 @@
   "description": "Platform for ABX Audio Testing https://abxtest.com",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack --mode development",
-    "build": "webpack --mode production",
-    "serve": "webpack serve --open --mode development",
+    "dev": "webpack --mode development --progress --profile",
+    "build": "webpack --mode production --progress --profile",
+    "serve": "webpack serve --open --mode development --progress --profile",
     "start": "serve -s build -l 80"
   },
   "keywords": [],
