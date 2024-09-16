@@ -49,7 +49,9 @@ module.exports = (env, argv) => {
             new FileManagerPlugin({
                 events: {
                     onStart: {
-                        delete: ['dist'],
+                        delete: [
+                            { source: path.join(__dirname, 'dist', '*') }, // Если файл
+                        ],
                     },
                     onEnd: {
                         copy: [
