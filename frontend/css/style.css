@@ -56,3 +56,6 @@
 .faq p{
     margin-top: 0.6rem;
 }
+.btn-dark{
+    border-radius: 10px;
+}

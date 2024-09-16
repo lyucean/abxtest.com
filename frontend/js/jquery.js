@@ -127,7 +127,7 @@ function renderCustomAudioPlayer(id, audioUrl) {
         <div id="${id}-player" class="custom-audio-player d-flex align-items-center">
             <button id="${id}-play-pause" class="btn btn-dark me-3">Play</button>
             <input id="${id}-slider" type="range" class="bg-info flex-grow-1 me-3" value="0" min="0" max="100" step="1">
-            <span id="${id}-time" class="text-black">0:00 / 0:00</span>
+            <span id="${id}-time" class="text-black d-none d-sm-block">0:00 / 0:00</span>
         </div>
         <audio id="${id}" style="display:none;">
             <source src="${audioUrl}" type="audio/mpeg">${t('browserDoesNotSupport')}
