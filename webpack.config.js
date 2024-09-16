@@ -60,8 +60,8 @@ module.exports = (env, argv) => {
                     onEnd: {
                         copy: [
                             {
-                                source: path.join(__dirname, 'frontend/assets/img', 'og_image.jpg')
-                                , destination: path.join(__dirname, 'dist/assets', 'og_image.jpg')
+                                source: path.join(__dirname, 'frontend/assets/img', 'abxtest.jpeg')
+                                , destination: path.join(__dirname, 'dist/assets', 'abxtest.jpeg')
                             },
                         ],
                     },
@@ -83,7 +83,7 @@ module.exports = (env, argv) => {
                     },
                     'og:image': {
                         property: 'og:image',
-                        content: 'https://abxtest.com/assets/og_image.jpg'
+                        content: 'https://abxtest.com/assets/abxtest.jpeg'
                     },
                     'og:url': {
                         property: 'og:url',
