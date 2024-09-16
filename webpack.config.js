@@ -46,14 +46,44 @@ module.exports = (env, argv) => {
             ]
         },
         plugins: [
-            new HtmlWebpackPlugin({
-                template: base_template,
-                filename: 'index.html',
-            }),
             new FileManagerPlugin({
                 events: {
                     onStart: {
                         delete: ['dist'],
+                    },
+                    onEnd: {
+                        copy: [
+                            { source: path.join(__dirname, 'frontend/assets/img', 'og_image.jpg')
+                                , destination: path.join(__dirname, 'dist/assets', 'og_image.jpg') },
+                        ],
+                    },
+                },
+            }),
+            new HtmlWebpackPlugin({
+                template: base_template,
+                filename: 'index.html',
+                meta: {
+                    title: 'Welcome to the Audio Quality Test',
+                    description: 'Check the audio quality with our test!',
+                    'og:title': {
+                        property: 'og:title',
+                        content: 'Welcome to the Audio Quality Test'
+                    },
+                    'og:description': {
+                        property: 'og:description',
+                        content: 'Check the audio quality with our test!'
+                    },
+                    'og:image': {
+                        property: 'og:image',
+                        content: 'https://abxtest.com/frontend/assets/og_image.jpg'
+                    },
+                    'og:url': {
+                        property: 'og:url',
+                        content: 'https://abxtest.com'
+                    },
+                    'og:type': {
+                        property: 'og:type',
+                        content: 'website'
                     },
                 },
             }),
