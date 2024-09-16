@@ -26,6 +26,11 @@
                 ["id" => "LinkinPark_InTheEnd", "name" => "Linkin Park - In the End"],
                 ["id" => "Eminem_TheRealSlimShady", "name" => "Eminem - The Real Slim Shady"],
                 ["id" => "Queen_BohemianRhapsody", "name" => "Queen - Bohemian Rhapsody"],
+                ["id" => "TheEagles_HotelCalifornia", "name" => "The Eagles - Hotel California"],
+                ["id" => "DaveBrubeck_TakeFive", "name" => "Dave Brubeck - Take Five"],
+                ["id" => "Metallica_EnterSandman", "name" => "Metallica - Enter Sandman"],
+                ["id" => "Metallica_SadButTrue", "name" => "Metallica - Sad But True"],
+                ["id" => "MichaelJackson_BillieJean", "name" => "Michael Jackson - Billie Jean"],
             ];
 
             $response->getBody()->write(json_encode($tracks));
