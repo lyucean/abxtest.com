@@ -75,7 +75,7 @@ module.exports = (env, argv) => {
                     },
                     'og:image': {
                         property: 'og:image',
-                        content: 'https://abxtest.com/frontend/assets/og_image.jpg'
+                        content: 'https://abxtest.com/assets/og_image.jpg'
                     },
                     'og:url': {
                         property: 'og:url',
