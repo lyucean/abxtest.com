@@ -7,6 +7,8 @@ const webpack = require('webpack');
 const Dotenv = require('dotenv-webpack');
 
 const base_template = path.join(__dirname, 'frontend', 'index.html'); // базовый шаблон
+// Получаем текущую дату и время в формате ГГГГММДД.ЧЧММСС дле наименования релиза
+const releaseDate = (() => `${String(new Date().getFullYear()).slice(2)}${String(new Date().getMonth() + 1).padStart(2, '0')}${String(new Date().getDate()).padStart(2, '0')}.${String(new Date().getHours()).padStart(2, '0')}${String(new Date().getMinutes()).padStart(2, '0')}${String(new Date().getSeconds()).padStart(2, '0')}`)();
 
 module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
@@ -105,6 +107,9 @@ module.exports = (env, argv) => {
             }),
             new Dotenv({
                 path: isProduction ? './.env' : './.env.default', // Путь к вашему .env файлу в зависимости от режима
+            }),
+            new webpack.DefinePlugin({
+                'process.env.RELEASE': releaseDate, // Установите значение переменной
             }),
         ],
         devServer: {
