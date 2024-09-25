@@ -43,6 +43,18 @@ export const translations = {
                 </ul>
             </li>
             <li>
+                <strong>Какие форматы вы сравниваете и почему их?</strong>
+                <p>Мы сравниваем следующие форматы:</p>
+                <ul>
+                    <li><strong>96 кбит/с</strong> - Используется в интернет-радио и подкастах.</li>
+                    <li><strong>128 кбит/с</strong> - Качество бесплатных версий стриминговых сервисов (TIDAL Free, Deezer Free, Spotify Free).</li> 
+                    <li><strong>192 кбит/с</strong> - Приемлемое качество для Spotify, Apple Music и других.</li>
+                    <li><strong>256 кбит/с</strong> - Высокое качество в премиум-подписках (YouTube Music Premium, SoundCloud Go+).</li>
+                    <li><strong>320 кбит/с</strong> - Наивысшее качество MP3 (SoundCloud HQ, Spotify Premium).</li>
+                    <li><strong>Lossless</strong> - Формат без потерь для аудиофилов (Deezer HiFi, Amazon Music Unlimited).</li>
+                </ul>
+            </li>
+            <li>
                 <strong>Что такое lossless и сжатый формат?</strong>
                 <p><strong>Lossless:</strong> Аудио в формате без потерь (например, WAV или FLAC). Это формат, который сохраняет исходное качество звука без сжатия данных.<br>
                 <strong>Сжатый формат:</strong> Это формат, при котором данные сжимаются для уменьшения размера файла, что может привести к потере качества звука (например, MP3).</p>
@@ -128,6 +140,18 @@ export const translations = {
                     <li><strong>Audio A:</strong> The track in one quality (compressed format).</li>
                     <li><strong>Audio B:</strong> The same track in lossless format (uncompressed).</li>
                     <li><strong>Audio X:</strong> This will either be version A or version B. Your task is to determine whether audio X matches track A or B.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Which formats do you compare and why?</strong>
+                <p>We compare the following formats:</p>
+                <ul>
+                    <li><strong>96 kbps</strong> - Used in internet radio and podcasts.</li>
+                    <li><strong>128 kbps</strong> - Quality of free versions of streaming services (<em>TIDAL Free</em>, <em>Deezer Free</em>, <em>Spotify Free</em>).</li> 
+                    <li><strong>192 kbps</strong> - Acceptable quality for <em>Spotify</em>, <em>Apple Music</em>, and others.</li>
+                    <li><strong>256 kbps</strong> - High quality in premium subscriptions (<em>YouTube Music Premium</em>, <em>SoundCloud Go+</em>).</li>
+                    <li><strong>320 kbps</strong> - Highest quality MP3 (<em>SoundCloud HQ</em>, <em>Spotify Premium</em>).</li>
+                    <li><strong>Lossless</strong> - Lossless format for audiophiles (<em>Deezer HiFi</em>, <em>Amazon Music Unlimited</em>).</li>
                 </ul>
             </li>
             <li>
