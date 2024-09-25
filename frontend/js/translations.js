@@ -1,7 +1,8 @@
 // translations.js
 export const translations = {
     ru: {
-        title: "Добро пожаловать в тест качества аудио",
+        title: "Добро пожаловать на тест качества звука",
+        description: "Наш проект поможет оценить качество вашей акустики и слуха, проверяя, как вы различаете аудиоформаты.",
         start: "Начать тест",
         faq: "Как это работает?",
         loading: "Загрузка следующего теста...",
@@ -88,7 +89,8 @@ export const translations = {
 `
     },
     en: {
-        title: "Welcome to the audio quality test",
+        title: "Welcome to The Sound Quality test",
+        description: "Our project will help assess the quality of your acoustics and hearing by checking how you distinguish audio formats.",
         start: "Start Test",
         faq: "FAQ",
         loading: "Loading next test...",
@@ -177,6 +179,7 @@ export const translations = {
     },
     es: {
         title: "Bienvenido a la prueba de calidad de audio",
+        description: "Nuestro proyecto ayudará a evaluar la calidad de su acústica y audición al verificar cómo distingue los formatos de audio.",
         start: "Iniciar prueba",
         faq: "FAQ",
         loading: "Cargando la siguiente prueba...",
@@ -264,6 +267,7 @@ export const translations = {
     },
     zh: {
         title: "欢迎来到音频质量测试",
+        description: "我们的项目将帮助您评估音响和听力的质量，通过检查您对音频格式的识别能力。",
         start: "开始测试",
         faq: "常见问题",
         loading: "加载下一次测试...",
@@ -351,6 +355,7 @@ export const translations = {
     },
     de: {
         title: "Willkommen beim Audioqualitätstest",
+        description: "Unser Projekt wird Ihnen helfen, die Qualität Ihrer Akustik und Ihres Gehörs zu bewerten, indem es überprüft, wie gut Sie Audioformate unterscheiden.",
         start: "Test starten",
         faq: "FAQ",
         loading: "Lade den nächsten Test...",
@@ -439,6 +444,7 @@ export const translations = {
     },
     fr: {
         title: "Bienvenue au test de qualité audio",
+        description: "Notre projet aidera à évaluer la qualité de votre acoustique et de votre audition en vérifiant comment vous différenciez les formats audio.",
         start: "Démarrer le test",
         faq: "FAQ",
         loading: "Chargement du prochain test...",

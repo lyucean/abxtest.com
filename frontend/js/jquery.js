@@ -54,7 +54,8 @@ function renderStartCard() {
             <div class="card-body text-center">
                 <br/>
                 <br/>
-                <h1 class="fs-3 card-title mb-4">${t('title')}</h1>
+                <h1 class="fs-3 card-title mb-4">${t('title')}!</h1>
+                <p>${t('description')}</p>
                 <div class="d-grid gap-2 col-sm-6 col-12 mx-auto">
                     <button id="startButton" class="btn btn-primary btn-lg">${t('start')}</button>
                 </div>
