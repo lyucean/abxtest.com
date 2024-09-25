@@ -26,7 +26,7 @@ composer: ## Подключается к контейнеру PHP и работ�
 	@echo "$(PURPLE) Запуск композера $(RESET)"
 	docker compose exec php bash -c "composer -V; bash"
 
-up-php: ## поднять backend php
+up-php: ## Поднять backend php
 	@echo "$(PURPLE) Поднимем php $(RESET)"
 	docker compose up -d abx-php
 
@@ -34,14 +34,14 @@ composer-install: ## Установим пакеты composer
 	@echo "$(PURPLE) Запуск композера $(RESET)"
 	docker compose exec abx-php bash -c "composer install --no-interaction"
 
-up-nginx: ## поднять backend nginx
+up-nginx: ## Поднять backend nginx
 	@echo "$(PURPLE) Поднимем backend nginx $(RESET)"
 	docker compose up -d abx-nginx-loc
 
-devServer: ## поднимаем front devServer для разработки
+devServer: ## Поднимаем front devServer для разработки
 	@echo "$(PURPLE) Поднимем front devServer для разработки $(RESET)"
 	webpack serve --open --mode development --progress --profile
 
-realise : ## Build docker images
+realise: ## Соберем dist для production
 	@echo "$(PURPLE) Соберем dist для production $(RESET)"
 	webpack --mode production --progress --profile
