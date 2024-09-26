@@ -28,6 +28,9 @@
                 ["id" => "MichaelJackson_BillieJean", "name" => "Michael Jackson - Billie Jean"],
             ];
 
+            // Перемешиваем треки для удобства на клиенте
+            shuffle($tracks);
+
             $response->getBody()->write(json_encode($tracks));
             return $response->withHeader('Content-Type', 'application/json');
         });

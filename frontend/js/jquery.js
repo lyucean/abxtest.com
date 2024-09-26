@@ -18,6 +18,7 @@ let cardNumber = 1;
 let isLoading = false;
 let currentTrack = '';
 let tracks = []; // Треки, которые будут загружены из API
+let usedTrackIndices = []; // Массив для хранения индексов использованных треков
 let currentLanguage = 'en'; // Язык по умолчанию — Английский
 let testResults = []; // Массив для хранения результатов тестов
 let maxDiscernibleQuality = '96kbps'; // Максимально различимое качество
@@ -40,10 +41,26 @@ function getAudioUrl(trackId, quality) {
 }
 
 // ---------------------------------------------------------
-// Функция для выбора случайного трека
+// Функция для выбора случайного трека без повторений
 function selectRandomTrack() {
-    const randomIndex = Math.floor(Math.random() * tracks.length);
-    return tracks[randomIndex];
+    // Проверяем, были ли использованы все треки
+    if (usedTrackIndices.length === tracks.length) {
+        // Если все треки были использованы, сбрасываем список использованных индексов
+        usedTrackIndices = [];
+    }
+
+    // Создаем массив доступных индексов, исключая уже использованные
+    let availableIndices = tracks.map((_, index) => index)
+        .filter(index => !usedTrackIndices.includes(index));
+
+    // Выбираем случайный индекс из доступных
+    let selectedIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+
+    // Добавляем выбранный индекс в список использованных
+    usedTrackIndices.push(selectedIndex);
+
+    // Возвращаем трек с выбранным индексом
+    return tracks[selectedIndex];
 }
 
 // ---------------------------------------------------------
@@ -203,10 +220,13 @@ function renderCompleteCard() {
 // ---------------------------------------------------------
 // Функция для обработки начала теста
 function handleStart() {
-    isStarted = true;
-    currentTrack = selectRandomTrack();
-    xIsA = Math.random() < 0.5;
-    render();
+    isStarted = true; // Устанавливаем флаг начала теста
+    if (usedTrackIndices.length === tracks.length) { // Проверяем, нужно ли сбросить список использованных треков
+        usedTrackIndices = [];
+    }
+    currentTrack = selectRandomTrack(); // Выбираем случайный трек для начала теста
+    xIsA = Math.random() < 0.5; // Случайным образом определяем, будет ли X равно A
+    render(); // Обновляем отображение
 }
 
 // ---------------------------------------------------------
@@ -277,7 +297,7 @@ function processTestResult(choice, nextTrack, nextXIsA) {
 
     // Переходим к следующему треку
     cardNumber++; // Увеличиваем номер текущей карточки теста
-    currentTrack = nextTrack; // Устанавливаем следующий трек
+    currentTrack = selectRandomTrack(); // Устанавливаем следующий трек
     xIsA = nextXIsA; // Устанавливаем, является ли трек X треком A
 
     // Если дважды подряд был правильный ответ, повышаем качество теста
@@ -319,6 +339,7 @@ function resetTest() {
     currentTrack = '';
     testResults = [];
     maxDiscernibleQuality = '96kbps';
+    usedTrackIndices = [];
     render();
 }
 
