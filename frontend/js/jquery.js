@@ -22,6 +22,8 @@ let usedTrackIndices = []; // Массив для хранения индекс�
 let currentLanguage = 'en'; // Язык по умолчанию — Английский
 let testResults = []; // Массив для хранения результатов тестов
 let maxDiscernibleQuality = '96kbps'; // Максимально различимое качество
+let expectedTotalTests = 7; // Минимальное ожидаемое количество тестов (2 на каждое качество)
+let completedTests = 0; // Количество пройденных тестов
 
 // ---------------------------------------------------------
 // Подгружаем доступные языки
@@ -38,6 +40,15 @@ function t(key) {
 function getAudioUrl(trackId, quality) {
     const extension = quality === 'wav' ? '.wav' : '.mp3';
     return `${API_DOMAIN}/files/${trackId}_${quality}${extension}`;
+}
+
+// ---------------------------------------------------------
+// Функция для расчета ожидаемого количества оставшихся тестов:
+function calculateRemainingTests() {
+    const currentQualityIndex = qualities.indexOf(currentQuality);
+    const remainingQualities = qualities.length - currentQualityIndex;
+    // Предполагаем, что нужно минимум 2 теста на каждое оставшееся качество
+    return Math.max(2, remainingQualities * 2 - consecutiveCorrect);
 }
 
 // ---------------------------------------------------------
@@ -105,6 +116,10 @@ function renderFAQ() {
 // ---------------------------------------------------------
 // Функция для рендеринга карточки теста
 function renderTestCard() {
+    const remainingTests = calculateRemainingTests();
+    const totalTests = expectedTotalTests;
+    const completedTestsCount = totalTests - remainingTests;
+    const progress = (completedTestsCount / totalTests) * 100;
     return `
         <div class="card fade-in">
             <div class="card-body"> 
@@ -133,11 +148,18 @@ function renderTestCard() {
                     <button class="btn btn-primary choice-btn" data-choice="B">${t('choiceB')}</button>
                     <button class="btn btn-warning choice-btn" data-choice="Unknown">${t('choiceUnknown')}</button>
                 </div>
-                
-        
-                <div class="text-secondary text-center"><small>${cardNumber}</small></div>
+                <div class="text-secondary text-center"><small>${completedTests}/${totalTests}</small></div>
             </div>
         </div>
+            
+                 
+                <div class="mt-4">
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar bg-secondary" role="progressbar" style="width: ${progress}%;" 
+                             aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
     `;
 }
 
@@ -295,6 +317,8 @@ function processTestResult(choice, nextTrack, nextXIsA) {
             consecutiveIncorrect++; // Увеличиваем счетчик неправильных ответов
             consecutiveCorrect = 0; // Сбрасываем счетчик правильных ответов
         }
+        completedTests++; // Количество завершенных тестов
+        expectedTotalTests = Math.max(expectedTotalTests, completedTests + calculateRemainingTests()); // Обновляем ожидаемое общее количество тестов
     }
 
     // Переходим к следующему треку
@@ -342,6 +366,8 @@ function resetTest() {
     testResults = [];
     maxDiscernibleQuality = '96kbps';
     usedTrackIndices = [];
+    expectedTotalTests = 7; // Начальное предполагаемое количество тестов
+    completedTests = 0;
     render();
 }
 

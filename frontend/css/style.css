@@ -62,3 +62,7 @@ body {
 .btn-dark{
     border-radius: 10px;
 }
+
+.bg-secondary {
+    /*background-color: #adb5bd !important;*/
+}
