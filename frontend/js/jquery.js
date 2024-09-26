@@ -45,10 +45,9 @@ function getAudioUrl(trackId, quality) {
 // ---------------------------------------------------------
 // Функция для расчета ожидаемого количества оставшихся тестов:
 function calculateRemainingTests() {
-    const currentQualityIndex = qualities.indexOf(currentQuality);
-    const remainingQualities = qualities.length - currentQualityIndex;
-    // Предполагаем, что нужно минимум 2 теста на каждое оставшееся качество
-    return Math.max(2, remainingQualities * 2 - consecutiveCorrect);
+    const currentQualityIndex = qualities.indexOf(currentQuality); // Находим индекс текущего качества в массиве всех качеств
+    const remainingQualities = qualities.length - currentQualityIndex; // Вычисляем количество оставшихся качеств для тестирования
+    return Math.max(1, remainingQualities * 2 - consecutiveCorrect); // Предполагаем, что нужно минимум 2 теста на каждое оставшееся качество
 }
 
 // ---------------------------------------------------------
@@ -124,11 +123,11 @@ function renderTestCard() {
         <div class="card fade-in">
             <div class="card-body"> 
                 <div class="audio-block mb-4 bg-success text-white">
-                    <h3 class="h5 mb-3">${t('audioA')} (${currentQuality})</h3>
+                    <h3 class="h5 mb-3">${t('audioA')} - ${currentQuality}</h3>
                     ${renderCustomAudioPlayer('audio-a', getAudioUrl(currentTrack.id, currentQuality))}
                 </div>
                 <div class="audio-block mb-4 bg-primary text-white">
-                    <h3 class="h5 mb-3">${t('audioB')} (lossless)</h3>
+                    <h3 class="h5 mb-3">${t('audioB')} - Lossless</h3>
                     ${renderCustomAudioPlayer('audio-b', getAudioUrl(currentTrack.id, 'wav'))}
                 </div>
                 <div class="audio-block mb-4 bg-secondary text-white">
