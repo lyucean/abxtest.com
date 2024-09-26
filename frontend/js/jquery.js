@@ -124,7 +124,7 @@ function renderTestCard() {
                 <p class="text-center">
                     <small class="text-secondary">${t('currentQuality')}</small> ${currentQuality}
                     <br class="d-block d-lg-none"/>
-                    <small class="text-secondary">${t('currentTrack')}</small>
+                    <small class="text-secondary">${t('trackName')}</small>
                     <br class="d-block d-sm-none"/> ${currentTrack.name}
                 </p>
                 
@@ -195,6 +195,7 @@ function renderCompleteCard() {
             <li class="list-group-item">
                 Test ${index + 1}: ${statusBadge}
                 <br>${t('comparedFormats')} ${result.quality} vs Lossless
+                <br>${t('trackName')}: ${result.track}
             </li>
         `;
     }).join('');
@@ -281,7 +282,8 @@ function processTestResult(choice, nextTrack, nextXIsA) {
     testResults.push({
         isCorrect: isCorrect, // Верен ли выбор пользователя
         choice: choice, // Какой был сделан выбор
-        quality: currentQuality // Качество аудио, которое сейчас тестируется
+        quality: currentQuality, // Качество аудио, которое сейчас тестируется
+        track: currentTrack.name // Добавляем название трека
     });
 
     // Обновляем состояние правильных/неправильных ответов
