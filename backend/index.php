@@ -12,11 +12,6 @@
 
     // Группа маршрутов с префиксом /api
     $app->group('/api', function ($group) {
-        $group->get('/test', function (Request $request, Response $response, $args) {
-            $response->getBody()->write("Hello api!");
-            return $response;
-        });
-
         $group->get('/tracks', function (Request $request, Response $response, $args) {
             $tracks = [
                 ["id" => "DaftPunk_OneMoreTime", "name" => "Daft Punk - One More Time"],
