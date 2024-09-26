@@ -9,8 +9,8 @@ const API_DOMAIN = process.env.API_DOMAIN || 'https://abxtest.com/';
 // Глобальные переменные состояния для управления тестом
 let isStarted = false;
 let currentQuality = '96kbps';
-let consecutiveCorrect = 0;
-let consecutiveIncorrect = 0;
+let consecutiveCorrect = 0; // Переменная для отслеживания количества правильных ответов на текущем уровне качества
+let consecutiveIncorrect = 0; // Переменная для отслеживания общего количества ошибок на текущем уровне качества
 let isTestComplete = false;
 let finalResult = '';
 let xIsA = Math.random() < 0.5;
@@ -164,7 +164,7 @@ function renderLoadingCard() {
 // Функция для рендеринга карточки завершения теста
 function renderCompleteCard() {
     let resultsList = testResults.map((result, index) => {
-        let statusBadge = '';
+        let statusBadge;
 
         if (result.isCorrect) {
             statusBadge = `<span class="badge rounded-pill alert-success">${t('correct')}</span>`;
@@ -239,7 +239,7 @@ function handleChoice(choice) {
     const trackBPromise = $.get(getAudioUrl(nextTrack.id, 'wav')).always(updateProgress);
 
     // Дожидаемся загрузки обоих файлов
-    $.when(trackAPromise, trackBPromise).then((trackAResponse, trackBResponse) => {
+    $.when(trackAPromise, trackBPromise).then(() => {
         const actualLoadTime = Date.now() - startTime; // Вычисляем фактическое время загрузки
         const remainingTime = minLoadTime - actualLoadTime; // Рассчитываем оставшееся время, чтобы загрузка длилась минимум minLoadTime/1000 секунды
 
@@ -268,7 +268,6 @@ function processTestResult(choice, nextTrack, nextXIsA) {
     if (choice !== 'Unknown') {
         if (isCorrect) {
             consecutiveCorrect++; // Увеличиваем счетчик правильных ответов
-            consecutiveIncorrect = 0; // Сбрасываем счетчик неправильных ответов
             maxDiscernibleQuality = currentQuality; // Обновляем максимальное различимое качество
         } else {
             consecutiveIncorrect++; // Увеличиваем счетчик неправильных ответов
@@ -286,6 +285,7 @@ function processTestResult(choice, nextTrack, nextXIsA) {
         const currentIndex = qualities.indexOf(currentQuality); // Определяем текущее качество
         if (currentIndex < qualities.length - 1) {
             currentQuality = qualities[currentIndex + 1]; // Переходим на следующее качество
+            consecutiveIncorrect = 0; // Сбрасываем счетчик ошибок при переходе на новый уровень
         } else {
             finalResult = t('canHearDifference'); // Пользователь может различить все качества
             isTestComplete = true; // Завершаем тест
@@ -293,7 +293,7 @@ function processTestResult(choice, nextTrack, nextXIsA) {
         consecutiveCorrect = 0; // Сбрасываем счетчик правильных ответов
     }
 
-    // Если дважды подряд был неправильный ответ, завершаем тест
+    // Если общее количество ошибок на уровне достигло 2, завершаем тест
     if (consecutiveIncorrect === 2) {
         finalResult = t('cannotHearDifference').replace('{quality}', currentQuality); // Сообщаем пользователю, что он не различает качество
         isTestComplete = true; // Завершаем тест
@@ -303,8 +303,6 @@ function processTestResult(choice, nextTrack, nextXIsA) {
     isLoading = false;
     render(); // Обновляем интерфейс после завершения процесса
 }
-
-
 
 // ---------------------------------------------------------
 // Функция для сброса теста
