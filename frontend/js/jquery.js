@@ -188,9 +188,12 @@ function renderLoadingCard() {
                 <h2 class="card-title mb-4 text-center">${t('loading')}</h2>
                 <br/>
                 <div class="progress">
-                    <div id="loadingProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0"></div>
+                    <div id="loadingProgress" class="progress-bar bg-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0">
+                    </div>
                 </div>
                 <br/>
+                <br/>
+                <p id="loadingText" class="text-center lead">${t('loading')} 0%</p>
                 <br/>
                 <br/>
             </div>
@@ -258,41 +261,67 @@ function handleChoice(choice) {
     isLoading = true;
     render();
 
-    let loadedFiles = 0; // Счетчик загруженных файлов
-    const filesToLoad = 2; // Загружаем только два файла (A и B)
-    const minLoadTime = 2000; // Минимальное время загрузки в миллисекундах (2 секунды)
-    const startTime = Date.now(); // Сохраняем текущее время, когда начинается загрузка
+    // Инициализируем счетчики для отслеживания прогресса загрузки
+    let loadedFiles = 0;
+    const filesToLoad = 2;
 
     // Функция для обновления прогресса загрузки
-    function updateProgress() {
-        loadedFiles++; // Увеличиваем счетчик загруженных файлов
-        const progress = (loadedFiles / filesToLoad) * 100; // Вычисляем процент загрузки
-        $('#loadingProgress').css('width', `${progress}%`).attr('aria-valuenow', progress); // Обновляем прогресс-бар
+    function updateProgress(event) {
+        if (event.lengthComputable) {
+            // Вычисляем процент загрузки текущего файла
+            const percentComplete = (event.loaded / event.total) * 100;
+            // Вычисляем общий прогресс загрузки всех файлов
+            const overallProgress = (loadedFiles * 100 + percentComplete) / filesToLoad;
+            // Обновляем визуальный прогресс-бар
+            $('#loadingProgress').css('width', `${overallProgress}%`).attr('aria-valuenow', overallProgress);
+            // Обновляем текст с процентом загрузки
+            $('#loadingText').text(`${Math.round(overallProgress)}%`);
+        }
     }
 
-    // Выбираем случайный трек для следующего шага
-    const nextTrack = selectRandomTrack();
+    // Функция, вызываемая после завершения загрузки каждого файла
+    function onLoadComplete() {
+        loadedFiles++;
+        // Если все файлы загружены, переходим к обработке результата теста
+        if (loadedFiles === filesToLoad) {
+            processTestResult(choice, nextTrack, nextXIsA);
+        }
+    }
 
-    // Определяем, будет ли трек X являться треком A
+    // Выбираем следующий случайный трек и определяем, будет ли X равно A
+    const nextTrack = selectRandomTrack();
     const nextXIsA = Math.random() < 0.5;
 
-    // Загружаем два файла: трек A в MP3 формате и трек B в WAV формате
-    const trackAPromise = $.get(getAudioUrl(nextTrack.id, currentQuality)).always(updateProgress);
-    const trackBPromise = $.get(getAudioUrl(nextTrack.id, 'wav')).always(updateProgress);
+    // Загружаем аудиофайл A (текущее качество)
+    const trackAPromise = $.ajax({
+        url: getAudioUrl(nextTrack.id, currentQuality),
+        method: 'GET',
+        xhr: function() {
+            const xhr = new window.XMLHttpRequest();
+            xhr.addEventListener("progress", updateProgress, false);
+            return xhr;
+        }
+    }).always(onLoadComplete);
 
-    // Дожидаемся загрузки обоих файлов
-    $.when(trackAPromise, trackBPromise).then(() => {
-        const actualLoadTime = Date.now() - startTime; // Вычисляем фактическое время загрузки
-        const remainingTime = minLoadTime - actualLoadTime; // Рассчитываем оставшееся время, чтобы загрузка длилась минимум minLoadTime/1000 секунды
+    // Загружаем аудиофайл B (WAV качество)
+    const trackBPromise = $.ajax({
+        url: getAudioUrl(nextTrack.id, 'wav'),
+        method: 'GET',
+        xhr: function() {
+            const xhr = new window.XMLHttpRequest();
+            xhr.addEventListener("progress", updateProgress, false);
+            return xhr;
+        }
+    }).always(onLoadComplete);
 
-        // Если фактическое время меньше минимального, ждем оставшееся время
-        setTimeout(() => {
-            // После завершения минимального времени обработки продолжаем логику теста
-            processTestResult(choice, nextTrack, nextXIsA);
-        }, Math.max(remainingTime, 0)); // Ждем только если нужно
-    });
+    // Обрабатываем возможные ошибки при загрузке файлов
+    Promise.all([trackAPromise, trackBPromise])
+        .catch(error => {
+            console.error('Error loading audio files:', error);
+            isLoading = false;
+            $('#content').html(`<div class="alert alert-danger">${t('errorLoadingAudio')}</div>`);
+        });
 }
-
 // ---------------------------------------------------------
 // Функция для обработки результатов теста
 function processTestResult(choice, nextTrack, nextXIsA) {
