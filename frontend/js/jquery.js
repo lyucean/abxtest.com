@@ -143,8 +143,8 @@ function renderTestCard() {
                 </p>
                 
                 <div class="d-flex justify-content-between mb-4">
-                    <button class="btn btn-success choice-btn" data-choice="A">${t('choiceA')}</button>
-                    <button class="btn btn-primary choice-btn" data-choice="B">${t('choiceB')}</button>
+                    <button class="btn btn-success choice-btn" data-choice="A">${t('choiceA')} <span class="d-none d-md-inline">(${currentQuality})</span></button>
+                    <button class="btn btn-primary choice-btn" data-choice="B">${t('choiceB')} <span class="d-none d-md-inline">(Lossless)</span></button>
                     <button class="btn btn-warning choice-btn" data-choice="Unknown">${t('choiceUnknown')}</button>
                 </div>
                 <div class="text-secondary text-center"><small>${completedTests}/${totalTests}</small></div>
