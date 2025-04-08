@@ -32,8 +32,6 @@ make init
 Перед запуском сервера разработки необходимо установить зависимости:
 
 ```bash
-# Перейти в директорию frontend
-cd frontend
 
 # Установить зависимости
 npm install
@@ -60,7 +58,7 @@ npm install
   или
   
   ```bash
-  cd frontend && npm run dev
+  npx webpack serve --open --mode development --progress --profile
    ```
 - Запуск мок-сервера для разработки:
   
