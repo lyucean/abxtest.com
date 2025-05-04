@@ -3,7 +3,7 @@
 const qualities = ['96kbps', '128kbps', '256kbps', '320kbps'];
 
 // API домен (локальный или продакшн)
-const API_DOMAIN = process.env.API_DOMAIN || 'https://abxtest.com/';
+const API_DOMAIN = 'http://localhost/';
 
 // ---------------------------------------------------------
 // Глобальные переменные состояния для управления тестом
@@ -371,6 +371,30 @@ function processTestResult(choice, nextTrack, nextXIsA) {
     if (consecutiveIncorrect === 2) {
         finalResult = t('cannotHearDifference').replace('{quality}', currentQuality); // Сообщаем пользователю, что он не различает качество
         isTestComplete = true; // Завершаем тест
+    }
+
+    // Если тест завершен, отправляем результаты
+    if (isTestComplete) {
+        // Подготавливаем данные для отправки
+        const resultData = {
+            finalResult: finalResult,
+            maxDiscernibleQuality: maxDiscernibleQuality,
+            testResults: testResults
+        };
+
+        // Отправляем результаты на сервер
+        $.ajax({
+            url: `${API_DOMAIN}/api/send-results`,
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(resultData),
+            success: function(response) {
+                console.log('Results sent successfully');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error sending results:', error);
+            }
+        });
     }
 
     // Снимаем флаг загрузки и обновляем интерфейс
