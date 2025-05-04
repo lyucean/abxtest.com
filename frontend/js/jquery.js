@@ -379,7 +379,8 @@ function processTestResult(choice, nextTrack, nextXIsA) {
         const resultData = {
             finalResult: finalResult,
             maxDiscernibleQuality: maxDiscernibleQuality,
-            testResults: testResults
+            testResults: testResults,
+            userAgent: navigator.userAgent
         };
 
         // Отправляем результаты на сервер
