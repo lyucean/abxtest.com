@@ -3,7 +3,7 @@
 const qualities = ['96kbps', '128kbps', '256kbps', '320kbps'];
 
 // API домен (локальный или продакшн)
-const API_DOMAIN = 'http://localhost/';
+const API_DOMAIN = process.env.API_DOMAIN || 'https://abxtest.com/';
 
 // ---------------------------------------------------------
 // Глобальные переменные состояния для управления тестом
@@ -388,7 +388,7 @@ function processTestResult(choice, nextTrack, nextXIsA) {
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(resultData),
-            success: function(response) {
+            success: function() {
                 console.log('Results sent successfully');
             },
             error: function(xhr, status, error) {
