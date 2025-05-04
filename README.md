@@ -1,105 +1,163 @@
-# ABX Test Project
+# ABX Audio Test
 
-Этот проект помогает пользователям проверить свою способность различать форматы аудио разного качества.
+ABX Audio Test - это веб-приложение для проведения слепого тестирования способности различать качество аудио. Проект помогает пользователям определить, какое минимальное качество аудио они способны отличить от lossless-формата.
 
-## Инструкции по установке
+## Технологический стек
 
-### Требования
-- Docker и Docker Compose
-- Node.js (v14 или новее)
-- npm (v6 или новее)
+### Frontend
+- HTML5/CSS3
+- JavaScript (jQuery)
+- Bootstrap для стилизации
+- Webpack для сборки
+- Custom audio player implementation
 
-### Установка и запуск
+### Backend
+- PHP 8.2
+- Slim Framework 4.0
+- Composer для управления зависимостями
+- Telegram Bot API для отправки результатов
 
-#### Бэкенд
-Для инициализации бэкенд-сервисов:
+### Инфраструктура
+- Docker & Docker Compose
+- Nginx
+- PHP-FPM
+- Traefik для маршрутизации и SSL
+- Make для автоматизации
 
+## Структура проекта
+
+```
+project-root/
+├── backend/                    # Backend PHP приложение
+│   ├── index.php              # Основной файл с API endpoints
+│   ├── vendor/                # Composer зависимости
+│   └── composer.json          # Конфигурация Composer
+│
+├── docker/                    # Docker конфигурации
+│   ├── nginx/                 # Конфигурация Nginx
+│   │   └── default.conf      # Основной конфиг Nginx
+│   └── php/                   # Конфигурация PHP
+│       ├── Dockerfile        # Dockerfile для PHP
+│       └── conf.d/           # Дополнительные конфиги PHP
+│           ├── xdebug.ini    # Конфигурация Xdebug
+│           └── error_reporting.ini  # Настройки отчетов об ошибках
+│
+├── frontend/                  # Frontend исходники
+│   ├── js/                   # JavaScript файлы
+│   │   ├── jquery.js        # Основная логика приложения
+│   │   └── translations.js  # Файл с переводами
+│   ├── css/                  # Стили
+│   │   └── style.css       # Основные стили
+│   └── index.html           # Главная страница
+│
+├── dist/                     # Собранные файлы для production
+│   ├── js/                  # Скомпилированные JS файлы
+│   ├── css/                 # Скомпилированные CSS файлы
+│   └── index.html          # Production версия HTML
+│
+├── files/                    # Аудио файлы для тестирования
+│   ├── DaftPunk_OneMoreTime_96kbps.mp3
+│   ├── DaftPunk_OneMoreTime_128kbps.mp3
+│   ├── DaftPunk_OneMoreTime_256kbps.mp3
+│   ├── DaftPunk_OneMoreTime_320kbps.mp3
+│   ├── DaftPunk_OneMoreTime_wav.wav
+│   └── ... (другие аудио файлы)
+│
+├── .env                      # Переменные окружения
+├── .gitignore               # Git игнорируемые файлы
+├── docker-compose.yml       # Docker Compose конфигурация
+├── Makefile                 # Make команды для автоматизации
+├── package.json             # npm зависимости и скрипты
+├── webpack.config.js        # Конфигурация Webpack
+└── README.md               # Документация проекта
+```
+
+## Установка и настройка окружения
+
+### Предварительные требования
+- Docker & Docker Compose
+- Node.js и npm
+- Make
+- Git
+
+### Первоначальная настройка
+
+1. Клонируйте репозиторий:
+```bash
+git clone [repository-url]
+cd [project-directory]
+```
+
+2. Создайте файл .env в корне проекта:
+```env
+API_DOMAIN=https://your-domain/
+ENVIRONMENT=Production
+TELEGRAM_TOKEN=your-telegram-bot-token
+TELEGRAM_CHAT_ID=your-telegram-chat-id
+```
+
+3. Установите npm зависимости:
+```bash
+npm install
+```
+
+## Разработка
+
+### Запуск dev-сервера
+
+1. Инициализация проекта (первый запуск):
 ```bash
 make init
 ```
 
-Эта команда выполнит:
+Эта команда:
+- Остановит существующие контейнеры
+- Загрузит необходимые Docker образы
+- Соберет контейнеры
+- Запустит PHP контейнер
+- Установит Composer зависимости
+- Запустит Nginx
+- Поднимет Webpack dev server
 
-1. Остановку всех запущенных контейнеров
-2. Загрузку необходимых Docker-образов
-3. Сборку Docker-контейнеров
-4. Запуск PHP-контейнера
-5. Установку зависимостей Composer
-6. Запуск Nginx-контейнера
-7. Запуск фронтенд-сервера разработки
-
-### Фронтенд
-Перед запуском сервера разработки необходимо установить зависимости:
-
+2. Для последующей разработки достаточно:
 ```bash
-
-# Установить зависимости
-npm install
+make devServer
 ```
 
-### Доступные команды
-- Сборка проекта для продакшн:
-  
-  ```bash
-  webpack --mode production
-   ```
-  
-  или
-  
-  ```bash
-  make realise
-   ```
-- Запуск сервера разработки:
-  
-  ```bash
-  webpack serve --open --mode development
-   ```
-  
-  или
-  
-  ```bash
-  npx webpack serve --open --mode development --progress --profile
-   ```
-- Запуск мок-сервера для разработки:
-  
-  ```bash
-  make mock
-   ```
-- Запуск бэкенда:
-  
-  ```bash
-  make init
-   ```
+### Доступные make команды
 
-## Все доступные Make-команды
-- make init - Инициализация всего проекта
-- make down - Остановка всех Docker-контейнеров
-- make build - Сборка Docker-образов
-- make pull - Загрузка необходимых Docker-образов
-- make up-php - Запуск PHP-контейнера
-- make up-nginx - Запуск Nginx-контейнера
-- make composer-install - Установка зависимостей Composer
-- make devServer - Запуск фронтенд-сервера разработки
-- make realise - Сборка фронтенда для продакшн
-- make mock - Запуск мок-сервера для разработки
-- make composer - Подключение к контейнеру PHP для работы с composer
+| Команда | Описание |
+|---------|----------|
+| `make init` | Полная инициализация проекта |
+| `make down` | Остановка всех контейнеров |
+| `make build` | Сборка Docker контейнеров |
+| `make pull` | Загрузка Docker образов |
+| `make composer` | Доступ к Composer в PHP контейнере |
+| `make up-php` | Запуск PHP контейнера |
+| `make up-nginx` | Запуск Nginx контейнера |
+| `make devServer` | Запуск Webpack dev server |
+| `make realise` | Сборка production версии |
 
-## Рабочий процесс разработки
-1. Запустите бэкенд: make init
-2. В отдельном терминале запустите фронтенд-сервер разработки: cd frontend && npm run dev
-3. Для тестирования без бэкенда используйте мок-сервер: make mock
-4. Для сборки проекта в продакшн используйте: make realise
-После запуска сервера разработки, сайт будет доступен по адресу: http://localhost:8080
+## Деплой
 
+### Подготовка релиза
 
-Установленные пакеты node:
+1. Соберите production версию:
+```bash
+make realise
+```
 
-- npm i -D webpack webpack-cli
-- npm i -D html-webpack-plugin плагин создает HTML-файл на основе шаблона
-- npm i -D webpack-dev-server сервер для разработки
-- npm i -D filemanager-webpack-plugin удаление, копирование и перемещение внутри проекта
-- npm i -D style-loader css-loader сборка и добавление css к проекту
-- npm i -D mini-css-extract-plugin извлечение CSS из файлов .js
-- npm i -D favicons favicons-webpack-plugin добавляет favicons
-- npm i jquery добавляет jquery
-- npm i dotenv dotenv-webpack добавляет .env в проект
+Это создаст оптимизированную сборку в директории `dist/`
+
+### Production окружение
+
+В production используется Traefik для:
+- Маршрутизации запросов
+- Автоматического получения SSL сертификатов
+- Балансировки нагрузки
+
+Конфигурация находится в `docker-compose.yml` в секции labels сервиса `abx-nginx`.
+
+## Контакты
+
+Telegram: [t.me/lyucean](https://t.me/lyucean)
