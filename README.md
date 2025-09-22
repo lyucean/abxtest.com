@@ -9,7 +9,6 @@ ABX Audio Test - это веб-приложение для проведения 
 - JavaScript (jQuery)
 - Bootstrap для стилизации
 - Webpack для сборки
-- Custom audio player implementation
 
 ### Backend
 - PHP 8.2
@@ -161,3 +160,4 @@ make realise
 ## Контакты
 
 Telegram: [t.me/lyucean](https://t.me/lyucean)
+
