@@ -1,6 +1,8 @@
 name: Deployment
 
-concurrency: production
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
 
 on:
   push:
@@ -8,22 +10,25 @@ on:
   pull_request:
     branches: [ "master" ]
 
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Create project directory
-        uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          script: mkdir -p /home/user/abxtest.com
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install deps and build frontend
+        run: |
+          npm ci
+          npm run build
 
       - name: "Заполнение переменных среды"
         run: |
@@ -32,7 +37,30 @@ jobs:
           echo "API_DOMAIN=https://abxtest.com/" >> .env
           echo "ENVIRONMENT=Production" >> .env
 
-      - name: Clean remote dist folder
+      - name: Install rsync client
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y rsync sshpass
+
+      - name: Rsync only required files (fast, incremental)
+        env:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          PORT: ${{ secrets.PORT }}
+        run: |
+          RSYNC_EXCLUDES=(
+            "--exclude=.git/"
+            "--exclude=node_modules/"
+            "--exclude=.github/"
+            "--exclude=frontend/"
+          )
+          sshpass -p "$PASSWORD" rsync -az --delete -e "ssh -o StrictHostKeyChecking=no -p $PORT" \
+            "${RSYNC_EXCLUDES[@]}" \
+            ./docker-compose.yml ./docker ./backend ./dist ./.env \
+            "$USERNAME@$HOST:/var/www/abxtest.com/"
+
+      - name: Restart services (no build/pull, just up)
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -40,53 +68,16 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            rm -rf /var/www/abxtest.com/dist/*
-
-      - name: Copy docker-compose.yml to remote server
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          source: "./*"
-          target: "/var/www/abxtest.com"
-
-  publish:
-    runs-on: ubuntu-latest
-    needs: [deploy]
-    steps:
-      - name: Create web network and start docker compose
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          script: |
-            cd /var/www/abxtest.com/
-            docker compose down --remove-orphans
-            docker compose pull
-            docker compose build
-            docker compose up -d abx-nginx
-            docker compose up -d abx-php
-            docker compose exec abx-php bash -c "composer install --no-interaction"
+            set -e
+            cd /var/www/abxtest.com
+            docker compose up -d abx-nginx abx-php
             docker compose ps
 
-  test:
-    runs-on: ubuntu-latest
-    needs: [publish]
-    steps:
-      - name: Check website
+      - name: Smoke test
         uses: wei/curl@v1
         with:
-          args:  https://abxtest.com/
+          args: https://abxtest.com/
 
-  alert:
-    name: Alert
-    runs-on: ubuntu-latest
-    needs: [publish]
-    steps:
       - name: Send telegram message on push
         uses: appleboy/telegram-action@master
         with:
