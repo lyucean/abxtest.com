@@ -148,15 +148,6 @@ make realise
 
 Это создаст оптимизированную сборку в директории `dist/`
 
-### Production окружение
-
-В production используется Traefik для:
-- Маршрутизации запросов
-- Автоматического получения SSL сертификатов
-- Балансировки нагрузки
-
-Конфигурация находится в `docker-compose.yml` в секции labels сервиса `abx-nginx`.
-
 ## Контакты
 
 Telegram: [t.me/lyucean](https://t.me/lyucean)
