@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 2  # Нужно для проверки изменений
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -37,6 +37,29 @@ jobs:
           echo "API_DOMAIN=https://abxtest.com/" >> .env
           echo "ENVIRONMENT=Production" >> .env
 
+      - name: Check what changed
+        id: changes
+        run: |
+          # Проверяем, есть ли предыдущий коммит
+          if git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+          else
+            # Первый коммит - считаем, что всё изменилось
+            CHANGED_FILES=$(git diff --name-only --diff-filter=A HEAD)
+          fi
+          
+          if echo "$CHANGED_FILES" | grep -qE "(docker/php/Dockerfile|docker/php/)"; then
+            echo "php_dockerfile_changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "php_dockerfile_changed=false" >> $GITHUB_OUTPUT
+          fi
+          
+          if echo "$CHANGED_FILES" | grep -qE "(composer\.json|composer\.lock)"; then
+            echo "composer_changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "composer_changed=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Install rsync client
         run: |
           sudo apt-get update -y
@@ -54,14 +77,23 @@ jobs:
             "--exclude=node_modules/"
             "--exclude=.github/"
             "--exclude=frontend/"
+            "--exclude=package*.json"
+            "--exclude=webpack.config.js"
+            "--exclude=Makefile"
+            "--exclude=README.md"
           )
           sshpass -p "$PASSWORD" rsync -az --delete -e "ssh -o StrictHostKeyChecking=no -p $PORT" \
             "${RSYNC_EXCLUDES[@]}" \
             ./docker-compose.yml ./docker ./backend ./dist ./.env \
             "$USERNAME@$HOST:/var/www/abxtest.com/"
 
-      - name: Restart services (no build/pull, just up)
+      - name: Smart deploy (build/composer only if needed)
         uses: appleboy/ssh-action@master
+        env:
+          PHP_DOCKERFILE_CHANGED: ${{ steps.changes.outputs.php_dockerfile_changed }}
+          COMPOSER_CHANGED: ${{ steps.changes.outputs.composer_changed }}
+          COMPOSE_DOCKER_CLI_BUILD: 1
+          DOCKER_BUILDKIT: 1
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
@@ -69,8 +101,29 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             set -e
+            export COMPOSE_DOCKER_CLI_BUILD=1
+            export DOCKER_BUILDKIT=1
             cd /var/www/abxtest.com
+            
+            # Пересобираем PHP образ только если изменился Dockerfile
+            if [ "$PHP_DOCKERFILE_CHANGED" = "true" ]; then
+              echo "🔨 Пересобираем PHP образ (изменился Dockerfile)..."
+              docker compose build abx-php
+            else
+              echo "⏭️  PHP образ не изменился, пропускаем сборку"
+            fi
+            
+            # Поднимаем сервисы (docker compose сам решит, нужно ли пересоздавать)
             docker compose up -d abx-nginx abx-php
+            
+            # Composer install только если изменились зависимости
+            if [ "$COMPOSER_CHANGED" = "true" ]; then
+              echo "📦 Обновляем зависимости Composer..."
+              docker compose exec -T abx-php bash -c "composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader"
+            else
+              echo "⏭️  Зависимости не изменились, пропускаем composer install"
+            fi
+            
             docker compose ps
 
       - name: Smoke test
@@ -78,14 +131,24 @@ jobs:
         with:
           args: https://abxtest.com/
 
+      - name: Get commit message
+        if: ${{ github.event_name == 'push' }}
+        id: commit
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "message<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMIT_MSG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Send telegram message on push
+        if: ${{ github.event_name == 'push' }}
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
             ${{ github.actor }} создал commit:
-            Commit: ${{ github.event.commits[0].message }}
+            Commit: ${{ steps.commit.outputs.message }}
 
             Репозиторий: ${{ github.repository }}
 
