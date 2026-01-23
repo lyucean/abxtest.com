@@ -22,3 +22,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # Установка часового пояса Москвы
 RUN ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+
+# Копируем конфигурацию PHP-FPM для прослушивания на всех интерфейсах
+COPY conf.d/www.conf /usr/local/etc/php-fpm.d/www.conf
