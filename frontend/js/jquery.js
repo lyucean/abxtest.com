@@ -5,6 +5,16 @@ const qualities = ['96kbps', '128kbps', '256kbps', '320kbps'];
 // API домен (локальный или продакшн)
 const API_DOMAIN = process.env.API_DOMAIN || 'https://abxtest.com/';
 
+const YANDEX_METRIKA_ID = 61782772;
+
+// ---------------------------------------------------------
+// Виртуальный просмотр для Яндекс.Метрики (SPA: без hit() сессия считается отказом)
+function metrikaHit(url, title) {
+    if (typeof ym !== 'undefined') {
+        ym(YANDEX_METRIKA_ID, 'hit', url, { title: title || document.title });
+    }
+}
+
 // ---------------------------------------------------------
 // Глобальные переменные состояния для управления тестом
 let isStarted = false;
@@ -432,13 +442,16 @@ function render() {
 
     if (!isStarted) {
         $content.html(renderStartCard());
+        metrikaHit('/', 'ABX Test - Main');
     } else if (isTestComplete) {
         $content.html(renderCompleteCard());
+        metrikaHit('#/results', 'ABX Test - Results');
     } else if (isLoading) {
         $content.html(renderLoadingCard());
     } else {
         $content.html(renderTestCard());
         initializeCustomAudioPlayers(); // Инициализация аудиоплееров после рендеринга
+        metrikaHit('#/test/step/' + cardNumber, 'ABX Test - Step ' + cardNumber);
     }
 }
 
@@ -545,6 +558,7 @@ $(document).ready(function() {
     $(document).off('click', '#startButton').on('click', '#startButton', handleStart);
     $(document).off('click', '#faqButton').on('click', '#faqButton', function() {
         $('#content').html(renderFAQ());
+        metrikaHit('#/faq', 'ABX Test - FAQ');
     });
     $(document).off('click', '#backButton').on('click', '#backButton', function() {
         render();
