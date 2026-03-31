@@ -15,12 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 2  # Нужно для проверки изменений
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
           cache: 'npm'
@@ -111,6 +111,7 @@ jobs:
             "--exclude=node_modules/"
             "--exclude=.github/"
             "--exclude=frontend/"
+            "--exclude=vendor/"
             "--exclude=*.mp3"
             "--exclude=*.wav"
             "--exclude=*.flac"
@@ -161,8 +162,9 @@ jobs:
             # Поднимаем сервисы (docker compose сам решит, нужно ли пересоздавать)
             docker compose up -d abx-nginx abx-php
             
-            # Composer install только если изменились зависимости
-            if [ "$COMPOSER_CHANGED" = "true" ]; then
+            # Composer install если изменились зависимости
+            # или если отсутствует autoload после синхронизации
+            if [ "$COMPOSER_CHANGED" = "true" ] || [ ! -f ./backend/vendor/autoload.php ]; then
               echo "📦 Обновляем зависимости Composer..."
               docker compose exec -T abx-php bash -c "composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader"
             else
