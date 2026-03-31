@@ -65,6 +65,40 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y rsync sshpass
 
+      - name: Ensure rsync exists on remote server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            set -e
+            if command -v rsync >/dev/null 2>&1; then
+              echo "rsync already installed on remote"
+              exit 0
+            fi
+
+            if command -v sudo >/dev/null 2>&1; then
+              SUDO="sudo"
+            else
+              SUDO=""
+            fi
+
+            if command -v apt-get >/dev/null 2>&1; then
+              $SUDO apt-get update -y
+              $SUDO apt-get install -y rsync
+            elif command -v yum >/dev/null 2>&1; then
+              $SUDO yum install -y rsync
+            elif command -v dnf >/dev/null 2>&1; then
+              $SUDO dnf install -y rsync
+            elif command -v apk >/dev/null 2>&1; then
+              $SUDO apk add --no-cache rsync
+            else
+              echo "Cannot install rsync automatically on remote host"
+              exit 1
+            fi
+
       - name: Rsync only required files (fast, incremental)
         env:
           HOST: ${{ secrets.HOST }}
@@ -77,6 +111,17 @@ jobs:
             "--exclude=node_modules/"
             "--exclude=.github/"
             "--exclude=frontend/"
+            "--exclude=*.mp3"
+            "--exclude=*.wav"
+            "--exclude=*.flac"
+            "--exclude=*.ogg"
+            "--exclude=*.aac"
+            "--exclude=*.m4a"
+            "--exclude=*.opus"
+            "--exclude=*.aiff"
+            "--exclude=*.aif"
+            "--exclude=*.alac"
+            "--exclude=*.ape"
             "--exclude=package*.json"
             "--exclude=webpack.config.js"
             "--exclude=Makefile"
