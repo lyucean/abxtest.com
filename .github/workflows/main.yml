@@ -160,8 +160,10 @@ jobs:
               echo "⏭️  PHP образ не изменился, пропускаем сборку"
             fi
             
-            # Поднимаем сервисы (docker compose сам решит, нужно ли пересоздавать)
-            docker compose up -d abx-nginx abx-php
+            # Nginx без лишнего пересоздания; abx-php всегда с --force-recreate,
+            # иначе после rsync нового .env контейнер может держать старый inode (без TELEGRAM_PROXY и т.п.)
+            docker compose up -d abx-nginx
+            docker compose up -d --force-recreate abx-php
             
             # Composer install если изменились зависимости
             # или если отсутствует autoload после синхронизации
