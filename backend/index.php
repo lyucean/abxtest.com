@@ -18,7 +18,8 @@
     $app->get('/api/test-env', function (Request $request, Response $response) {
         $response->getBody()->write(json_encode([
             'telegram_token_exists' => isset($_ENV['TELEGRAM_TOKEN']),
-            'chat_id_exists' => isset($_ENV['TELEGRAM_CHAT_ID'])
+            'chat_id_exists' => isset($_ENV['TELEGRAM_CHAT_ID']),
+            'telegram_proxy_set' => !empty(trim($_ENV['TELEGRAM_PROXY'] ?? ''))
         ]));
         return $response->withHeader('Content-Type', 'application/json');
     });
@@ -89,6 +90,12 @@
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            $telegramProxy = trim($_ENV['TELEGRAM_PROXY'] ?? '');
+            if ($telegramProxy !== '') {
+                curl_setopt($ch, CURLOPT_PROXY, $telegramProxy);
+                curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, true);
+            }
 
             $result = curl_exec($ch);
             curl_close($ch);

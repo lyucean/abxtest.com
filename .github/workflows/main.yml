@@ -34,6 +34,7 @@ jobs:
         run: |
           echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_ALERT_TOKEN }}" >> .env
           echo "TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_ALERT_CHAT_ID }}" >> .env
+          echo "TELEGRAM_PROXY=${{ secrets.TELEGRAM_PROXY }}" >> .env
           echo "API_DOMAIN=https://abxtest.com/" >> .env
           echo "ENVIRONMENT=Production" >> .env
 
