@@ -1,0 +1,37 @@
+<svg width="240" height="60" viewBox="0 0 240 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="240" height="60" rx="14" fill="#0B0B0F"/>
+  
+  <!-- Wave A (большая амплитуда) -->
+  <path d="M20 30 Q30 5 40 30 T60 30 T80 30"
+        stroke="#3B82F6"
+        stroke-width="2.5"
+        fill="none"/>
+
+  <!-- Wave B (средняя амплитуда) -->
+  <path d="M20 30 Q30 15 40 30 T60 30 T80 30"
+        stroke="#8B5CF6"
+        stroke-width="2"
+        fill="none"/>
+
+  <!-- Wave X (маленькая амплитуда) -->
+  <path d="M20 30 Q30 22 40 30 T60 30 T80 30"
+        stroke="#14B8A6"
+        stroke-width="1.5"
+        fill="none"/>
+  
+  <!-- Text -->
+  <text x="105" y="38"
+        font-family="Inter, sans-serif"
+        font-size="22"
+        fill="white"
+        letter-spacing="2">
+    ABX
+  </text>
+  
+  <text x="155" y="38"
+        font-family="Inter, sans-serif"
+        font-size="14"
+        fill="#9CA3AF">
+    TEST
+  </text>
+</svg>

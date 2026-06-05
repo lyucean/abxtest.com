@@ -1,0 +1,28 @@
+
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Transparent background by default -->
+
+  <!-- Dark circle -->
+  <circle cx="32" cy="32" r="28" fill="#0B0B0F"/>
+
+  <!-- Wave A -->
+  <path d="M14 32 Q20 16 26 32 T38 32 T50 32"
+        stroke="#3B82F6"
+        stroke-width="2.5"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <!-- Wave B -->
+  <path d="M14 32 Q20 24 26 32 T38 32 T50 32"
+        stroke="#8B5CF6"
+        stroke-width="2"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <!-- Wave X -->
+  <path d="M14 32 Q20 28 26 32 T38 32 T50 32"
+        stroke="#14B8A6"
+        stroke-width="1.5"
+        fill="none"
+        stroke-linecap="round"/>
+</svg>
