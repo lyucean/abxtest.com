@@ -3,3 +3,6 @@
 /.env
 /package-lock.json
 /backend/vendor/*
+/docker/nginx/active.conf
+/certbot/www/*
+!/certbot/www/.gitkeep

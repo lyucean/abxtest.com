@@ -12,23 +12,23 @@ init: down pull build up-php composer-install up-nginx devServer
 
 down: ## Stop docker containers
 	@echo "$(PURPLE) Останавливаем контейнеры $(RESET)"
-	docker compose down --remove-orphans
+	docker compose --profile dev --profile production down --remove-orphans
 
 build: ## Build docker images
 	@echo "$(PURPLE) Соберем контейнеры $(RESET)"
-	docker compose build
+	docker compose --profile dev build
 
 pull: ## Pull docker images
 	@echo "$(PURPLE) Загрузим необходимые Docker-образы $(RESET)"
-	docker compose pull
+	docker compose --profile dev --profile production pull
 
 composer: ## Подключается к контейнеру PHP и работаем с composer
 	@echo "$(PURPLE) Запуск композера $(RESET)"
-	docker compose exec php bash -c "composer -V; bash"
+	docker compose exec abx-php bash -c "composer -V; bash"
 
 up-php: ## Поднять backend php
 	@echo "$(PURPLE) Поднимем php $(RESET)"
-	docker compose up -d abx-php
+	docker compose --profile dev up -d abx-php
 
 composer-install: ## Установим пакеты composer
 	@echo "$(PURPLE) Запуск композера $(RESET)"
@@ -36,7 +36,7 @@ composer-install: ## Установим пакеты composer
 
 up-nginx: ## Поднять backend nginx
 	@echo "$(PURPLE) Поднимем backend nginx $(RESET)"
-	docker compose up -d abx-nginx-loc
+	docker compose --profile dev up -d abx-nginx-loc
 
 devServer: ## Поднимаем front devServer для разработки
 	@echo "$(PURPLE) Поднимем front devServer для разработки $(RESET)"

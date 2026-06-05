@@ -33,8 +33,8 @@ jobs:
       - name: Заполнение переменных среды
         if: github.event_name == 'workflow_dispatch'
         run: |
-          echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_ALERT_TOKEN }}" >> .env
-          echo "TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_ALERT_CHAT_ID }}" >> .env
+          echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
+          echo "TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}" >> .env
           echo "TELEGRAM_PROXY=${{ secrets.TELEGRAM_PROXY }}" >> .env
           echo "API_DOMAIN=https://abxtest.com/" >> .env
           echo "ENVIRONMENT=Production" >> .env
@@ -53,6 +53,12 @@ jobs:
             echo "php_dockerfile_changed=true" >> $GITHUB_OUTPUT
           else
             echo "php_dockerfile_changed=false" >> $GITHUB_OUTPUT
+          fi
+
+          if echo "$CHANGED_FILES" | grep -qE "(docker/nginx/|docker-compose\.yml)"; then
+            echo "nginx_config_changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "nginx_config_changed=false" >> $GITHUB_OUTPUT
           fi
 
           if echo "$CHANGED_FILES" | grep -qE "(composer\.json|composer\.lock)"; then
@@ -87,13 +93,14 @@ jobs:
             "--exclude=README.md"
           )
           rsync -az --delete "${RSYNC_EXCLUDES[@]}" \
-            ./docker-compose.yml ./docker ./backend ./dist ./.env \
+            ./docker-compose.yml ./docker ./certbot ./backend ./dist ./.env \
             "${DEPLOY_DIR}/"
 
       - name: Smart deploy
         if: github.event_name == 'workflow_dispatch'
         env:
           PHP_DOCKERFILE_CHANGED: ${{ steps.changes.outputs.php_dockerfile_changed }}
+          NGINX_CONFIG_CHANGED: ${{ steps.changes.outputs.nginx_config_changed }}
           COMPOSER_CHANGED: ${{ steps.changes.outputs.composer_changed }}
         run: |
           set -e
@@ -101,15 +108,30 @@ jobs:
           export DOCKER_BUILDKIT=1
           cd "${DEPLOY_DIR}"
 
+          mkdir -p certbot/www
+
+          if [ -f /etc/letsencrypt/live/abxtest.com/fullchain.pem ]; then
+            echo "Найден сертификат Let's Encrypt, включаем HTTPS"
+            cp docker/nginx/production.conf docker/nginx/active.conf
+          else
+            echo "Сертификат не найден, запускаем HTTP-конфиг для certbot"
+            cp docker/nginx/production.http.conf docker/nginx/active.conf
+          fi
+
           if [ "$PHP_DOCKERFILE_CHANGED" = "true" ]; then
             echo "Пересобираем PHP образ (изменился Dockerfile)..."
-            docker compose build abx-php
+            docker compose --profile production build abx-php
           else
             echo "PHP образ не изменился, пропускаем сборку"
           fi
 
-          docker compose up -d abx-nginx
-          docker compose up -d --force-recreate abx-php
+          docker compose --profile production up -d abx-php
+
+          if [ "$NGINX_CONFIG_CHANGED" = "true" ]; then
+            docker compose --profile production up -d --force-recreate abx-nginx
+          else
+            docker compose --profile production up -d abx-nginx
+          fi
 
           if [ "$COMPOSER_CHANGED" = "true" ] || [ ! -f ./backend/vendor/autoload.php ]; then
             echo "Обновляем зависимости Composer..."
@@ -118,11 +140,16 @@ jobs:
             echo "Зависимости не изменились, пропускаем composer install"
           fi
 
-          docker compose ps
+          docker compose --profile production ps
 
       - name: Smoke test
         if: github.event_name == 'workflow_dispatch'
-        run: curl -fsSL --max-time 15 https://abxtest.com/
+        run: |
+          if [ -f /etc/letsencrypt/live/abxtest.com/fullchain.pem ]; then
+            curl -fsSL --max-time 15 https://abxtest.com/
+          else
+            curl -fsSL --max-time 15 http://abxtest.com/
+          fi
 
       - name: Get commit message
         if: github.event_name == 'workflow_dispatch'
@@ -133,7 +160,7 @@ jobs:
           echo "$COMMIT_MSG" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Send telegram message on push
+      - name: Send telegram message on deploy
         if: github.event_name == 'workflow_dispatch'
         uses: appleboy/telegram-action@master
         with:
