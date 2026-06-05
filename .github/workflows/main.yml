@@ -12,7 +12,7 @@ env:
 
 jobs:
   deploy:
-    runs-on: self-hosted:host
+    runs-on: [self-hosted, linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -31,16 +31,16 @@ jobs:
           npm run build
 
       - name: Заполнение переменных среды
-        if: github.event_name == 'workflow_dispatch'
         run: |
-          echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
-          echo "TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}" >> .env
-          echo "TELEGRAM_PROXY=${{ secrets.TELEGRAM_PROXY }}" >> .env
-          echo "API_DOMAIN=https://abxtest.com/" >> .env
-          echo "ENVIRONMENT=Production" >> .env
+          cat > .env <<EOF
+          TELEGRAM_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_PROXY=${{ secrets.TELEGRAM_PROXY }}
+          API_DOMAIN=https://abxtest.com/
+          ENVIRONMENT=Production
+          EOF
 
       - name: Check what changed
-        if: github.event_name == 'workflow_dispatch'
         id: changes
         run: |
           if git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
@@ -68,7 +68,6 @@ jobs:
           fi
 
       - name: Sync files to deploy directory
-        if: github.event_name == 'workflow_dispatch'
         run: |
           RSYNC_EXCLUDES=(
             "--exclude=.git/"
@@ -97,7 +96,6 @@ jobs:
             "${DEPLOY_DIR}/"
 
       - name: Smart deploy
-        if: github.event_name == 'workflow_dispatch'
         env:
           PHP_DOCKERFILE_CHANGED: ${{ steps.changes.outputs.php_dockerfile_changed }}
           NGINX_CONFIG_CHANGED: ${{ steps.changes.outputs.nginx_config_changed }}
@@ -143,7 +141,6 @@ jobs:
           docker compose --profile production ps
 
       - name: Smoke test
-        if: github.event_name == 'workflow_dispatch'
         run: |
           if [ -f /etc/letsencrypt/live/abxtest.com/fullchain.pem ]; then
             curl -fsSL --max-time 15 https://abxtest.com/
@@ -152,7 +149,6 @@ jobs:
           fi
 
       - name: Get commit message
-        if: github.event_name == 'workflow_dispatch'
         id: commit
         run: |
           COMMIT_MSG=$(git log -1 --pretty=%B)
@@ -161,13 +157,12 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Send telegram message on deploy
-        if: github.event_name == 'workflow_dispatch'
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            ${{ github.actor }} создал commit:
+            ${{ github.actor }} запустил деплой:
             Commit: ${{ steps.commit.outputs.message }}
 
             Репозиторий: ${{ github.repository }}
