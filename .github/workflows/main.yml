@@ -5,10 +5,10 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  workflow_dispatch:
+
+env:
+  DEPLOY_DIR: /var/www/abxtest.com
 
 jobs:
   deploy:
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          fetch-depth: 2  # Нужно для проверки изменений
+          fetch-depth: 2
 
       - name: Setup Node
         uses: actions/setup-node@v5
@@ -30,7 +30,8 @@ jobs:
           npm ci
           npm run build
 
-      - name: "Заполнение переменных среды"
+      - name: Заполнение переменных среды
+        if: github.event_name == 'workflow_dispatch'
         run: |
           echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_ALERT_TOKEN }}" >> .env
           echo "TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_ALERT_CHAT_ID }}" >> .env
@@ -39,73 +40,29 @@ jobs:
           echo "ENVIRONMENT=Production" >> .env
 
       - name: Check what changed
+        if: github.event_name == 'workflow_dispatch'
         id: changes
         run: |
-          # Проверяем, есть ли предыдущий коммит
           if git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
             CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
           else
-            # Первый коммит - считаем, что всё изменилось
             CHANGED_FILES=$(git diff --name-only --diff-filter=A HEAD)
           fi
-          
+
           if echo "$CHANGED_FILES" | grep -qE "(docker/php/Dockerfile|docker/php/)"; then
             echo "php_dockerfile_changed=true" >> $GITHUB_OUTPUT
           else
             echo "php_dockerfile_changed=false" >> $GITHUB_OUTPUT
           fi
-          
+
           if echo "$CHANGED_FILES" | grep -qE "(composer\.json|composer\.lock)"; then
             echo "composer_changed=true" >> $GITHUB_OUTPUT
           else
             echo "composer_changed=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Install rsync client
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y rsync sshpass
-
-      - name: Ensure rsync exists on remote server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          script: |
-            set -e
-            if command -v rsync >/dev/null 2>&1; then
-              echo "rsync already installed on remote"
-              exit 0
-            fi
-
-            if command -v sudo >/dev/null 2>&1; then
-              SUDO="sudo"
-            else
-              SUDO=""
-            fi
-
-            if command -v apt-get >/dev/null 2>&1; then
-              $SUDO apt-get update -y
-              $SUDO apt-get install -y rsync
-            elif command -v yum >/dev/null 2>&1; then
-              $SUDO yum install -y rsync
-            elif command -v dnf >/dev/null 2>&1; then
-              $SUDO dnf install -y rsync
-            elif command -v apk >/dev/null 2>&1; then
-              $SUDO apk add --no-cache rsync
-            else
-              echo "Cannot install rsync automatically on remote host"
-              exit 1
-            fi
-
-      - name: Rsync only required files (fast, incremental)
-        env:
-          HOST: ${{ secrets.HOST }}
-          USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          PORT: ${{ secrets.PORT }}
+      - name: Sync files to deploy directory
+        if: github.event_name == 'workflow_dispatch'
         run: |
           RSYNC_EXCLUDES=(
             "--exclude=.git/"
@@ -129,60 +86,46 @@ jobs:
             "--exclude=Makefile"
             "--exclude=README.md"
           )
-          sshpass -p "$PASSWORD" rsync -az --delete -e "ssh -o StrictHostKeyChecking=no -p $PORT" \
-            "${RSYNC_EXCLUDES[@]}" \
+          rsync -az --delete "${RSYNC_EXCLUDES[@]}" \
             ./docker-compose.yml ./docker ./backend ./dist ./.env \
-            "$USERNAME@$HOST:/var/www/abxtest.com/"
+            "${DEPLOY_DIR}/"
 
-      - name: Smart deploy (build/composer only if needed)
-        uses: appleboy/ssh-action@master
+      - name: Smart deploy
+        if: github.event_name == 'workflow_dispatch'
         env:
           PHP_DOCKERFILE_CHANGED: ${{ steps.changes.outputs.php_dockerfile_changed }}
           COMPOSER_CHANGED: ${{ steps.changes.outputs.composer_changed }}
-          COMPOSE_DOCKER_CLI_BUILD: 1
-          DOCKER_BUILDKIT: 1
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          script: |
-            set -e
-            export COMPOSE_DOCKER_CLI_BUILD=1
-            export DOCKER_BUILDKIT=1
-            cd /var/www/abxtest.com
-            
-            # Пересобираем PHP образ только если изменился Dockerfile
-            if [ "$PHP_DOCKERFILE_CHANGED" = "true" ]; then
-              echo "🔨 Пересобираем PHP образ (изменился Dockerfile)..."
-              docker compose build abx-php
-            else
-              echo "⏭️  PHP образ не изменился, пропускаем сборку"
-            fi
-            
-            # Nginx без лишнего пересоздания; abx-php всегда с --force-recreate,
-            # иначе после rsync нового .env контейнер может держать старый inode (без TELEGRAM_PROXY и т.п.)
-            docker compose up -d abx-nginx
-            docker compose up -d --force-recreate abx-php
-            
-            # Composer install если изменились зависимости
-            # или если отсутствует autoload после синхронизации
-            if [ "$COMPOSER_CHANGED" = "true" ] || [ ! -f ./backend/vendor/autoload.php ]; then
-              echo "📦 Обновляем зависимости Composer..."
-              docker compose exec -T abx-php bash -c "composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader"
-            else
-              echo "⏭️  Зависимости не изменились, пропускаем composer install"
-            fi
-            
-            docker compose ps
+        run: |
+          set -e
+          export COMPOSE_DOCKER_CLI_BUILD=1
+          export DOCKER_BUILDKIT=1
+          cd "${DEPLOY_DIR}"
+
+          if [ "$PHP_DOCKERFILE_CHANGED" = "true" ]; then
+            echo "Пересобираем PHP образ (изменился Dockerfile)..."
+            docker compose build abx-php
+          else
+            echo "PHP образ не изменился, пропускаем сборку"
+          fi
+
+          docker compose up -d abx-nginx
+          docker compose up -d --force-recreate abx-php
+
+          if [ "$COMPOSER_CHANGED" = "true" ] || [ ! -f ./backend/vendor/autoload.php ]; then
+            echo "Обновляем зависимости Composer..."
+            docker compose exec -T abx-php bash -c "composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader"
+          else
+            echo "Зависимости не изменились, пропускаем composer install"
+          fi
+
+          docker compose ps
 
       - name: Smoke test
-        uses: wei/curl@v1
-        with:
-          args: https://abxtest.com/
+        if: github.event_name == 'workflow_dispatch'
+        run: curl -fsSL --max-time 15 https://abxtest.com/
 
       - name: Get commit message
-        if: ${{ github.event_name == 'push' }}
+        if: github.event_name == 'workflow_dispatch'
         id: commit
         run: |
           COMMIT_MSG=$(git log -1 --pretty=%B)
@@ -191,7 +134,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Send telegram message on push
-        if: ${{ github.event_name == 'push' }}
+        if: github.event_name == 'workflow_dispatch'
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -202,4 +145,4 @@ jobs:
 
             Репозиторий: ${{ github.repository }}
 
-            Изменения: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+            Изменения: https://gitverse.ru/${{ github.repository }}/commit/${{ github.sha }}
