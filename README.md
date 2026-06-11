@@ -1,163 +1,114 @@
-# ABX Audio Test
+# ABXtest — Blind Hearing Test: MP3 vs Lossless 🎧
 
-> **⚠️ Проект закрыт для публичного использования**
->
-> Разработка ABX Audio Test перенесена в коммерческое поле. Этот репозиторий на GitHub **больше не обновляется** и не будет публиковать новые версии.
->
-> Актуальная версия проекта: [gitverse.ru/lyucean/abxtest.com](https://gitverse.ru/lyucean/abxtest.com)
+**[abxtest.com](https://abxtest.com)** — free online service for blind ABX audio testing. Find out at what bitrate you *actually* hear the difference between compressed MP3 and lossless WAV — on your headphones, speakers, and gear.
+
+> "I've got perfect ears — prove it. Or shut up about FLAC." 😏
+
+You listen to three versions of the same track: **A** (compressed MP3), **B** (lossless WAV), and **X** (either A or B). Guess blind — no hints, no forum magic. The result shows your **hearing threshold**: the highest bitrate where you can still tell MP3 from lossless.
+
+**[Take the test →](https://abxtest.com)** 🚀
 
 ---
 
-ABX Audio Test - это веб-приложение для проведения слепого тестирования способности различать качество аудио. Проект помогает пользователям определить, какое минимальное качество аудио они способны отличить от lossless-формата.
+## Why bother?
 
-## Технологический стек
+- Figure out if you **actually hear the difference** between Spotify Free (128 kbps), Premium (320 kbps), and lossless
+- Check if your **audiophile obsession** is justified on your real setup
+- Compare yourself in the **rankings** — headphones, sound cards, devices, countries
+- Fast, no install — right in the browser, phone or PC, whatever you've got
 
-### Frontend
-- HTML5/CSS3
-- JavaScript (jQuery)
-- Bootstrap для стилизации
-- Webpack для сборки
+The test walks you through **96 → 128 → 256 → 320 kbps** vs reference WAV. All versions cut from the same master, loudness matched to **EBU R128** — so you're comparing compression quality, not volume. Fair fight. 🥊
 
-### Backend
-- PHP 8.2
-- Slim Framework 4.0
-- Composer для управления зависимостями
-- Telegram Bot API для отправки результатов
+---
 
-### Инфраструктура
-- Docker & Docker Compose
-- Nginx
-- PHP-FPM
-- Traefik для маршрутизации и SSL
-- Make для автоматизации
+## What ABXtest can do
 
-## Структура проекта
+### Blind ABX test
+Classic A / B / X setup. Two correct answers in a row — next bitrate. Two wrong — test's over, you learn your ceiling. Not sure? Skip the track, no penalty.
 
-```
-project-root/
-├── backend/                    # Backend PHP приложение
-│   ├── index.php              # Основной файл с API endpoints
-│   ├── vendor/                # Composer зависимости
-│   └── composer.json          # Конфигурация Composer
-│
-├── docker/                    # Docker конфигурации
-│   ├── nginx/                 # Конфигурация Nginx
-│   │   └── default.conf      # Основной конфиг Nginx
-│   └── php/                   # Конфигурация PHP
-│       ├── Dockerfile        # Dockerfile для PHP
-│       └── conf.d/           # Дополнительные конфиги PHP
-│           ├── xdebug.ini    # Конфигурация Xdebug
-│           └── error_reporting.ini  # Настройки отчетов об ошибках
-│
-├── frontend/                  # Frontend исходники
-│   ├── js/                   # JavaScript файлы
-│   │   ├── jquery.js        # Основная логика приложения
-│   │   └── translations.js  # Файл с переводами
-│   ├── css/                  # Стили
-│   │   └── style.css       # Основные стили
-│   └── index.html           # Главная страница
-│
-├── dist/                     # Собранные файлы для production
-│   ├── js/                  # Скомпилированные JS файлы
-│   ├── css/                 # Скомпилированные CSS файлы
-│   └── index.html          # Production версия HTML
-│
-├── files/                    # Аудио файлы для тестирования
-│   ├── DaftPunk_OneMoreTime_96kbps.mp3
-│   ├── DaftPunk_OneMoreTime_128kbps.mp3
-│   ├── DaftPunk_OneMoreTime_256kbps.mp3
-│   ├── DaftPunk_OneMoreTime_320kbps.mp3
-│   ├── DaftPunk_OneMoreTime_wav.wav
-│   └── ... (другие аудио файлы)
-│
-├── .env                      # Переменные окружения
-├── .gitignore               # Git игнорируемые файлы
-├── docker-compose.yml       # Docker Compose конфигурация
-├── Makefile                 # Make команды для автоматизации
-├── package.json             # npm зависимости и скрипты
-├── webpack.config.js        # Конфигурация Webpack
-└── README.md               # Документация проекта
-```
+### No signup needed
+Drop in, pick your gear, take the test, get your result. **20 random tracks**, shareable link, challenge a friend.
 
-## Установка и настройка окружения
+**[Start as guest →](https://abxtest.com)** 👋
 
-### Предварительные требования
-- Docker & Docker Compose
-- Node.js и npm
-- Make
-- Git
+### Free account = way more fun
+Email + nickname. Your page at **abxtest.com/your_nick**, full test history, genre pick, **200+ tracks**.
 
-### Первоначальная настройка
+- **Pair tests** — same track set, two results side by side. Who hears better, you or your bro? 👀
+- **Acoustic test** — same tracks, different setup. Headphones vs speakers, built-in DAC vs external
+- **Hearing profile** — by genre (rock, jazz, electronic, hip-hop, classical, pop) and by format
+- **Rankings** — show up on the leaderboard
 
-1. Клонируйте репозиторий:
-```bash
-git clone [repository-url]
-cd [project-directory]
-```
+**[Create account →](https://abxtest.com/register)** · **[See modes →](https://abxtest.com/modes)** ✨
 
-2. Создайте файл .env в корне проекта:
-```env
-API_DOMAIN=https://your-domain/
-ENVIRONMENT=Production
-TELEGRAM_TOKEN=your-telegram-bot-token
-TELEGRAM_CHAT_ID=your-telegram-chat-id
-```
+### Rankings 🏆
+Who hears what, on what:
 
-3. Установите npm зависимости:
-```bash
-npm install
-```
+- devices (MacBook, PC, phones)
+- headphones & headsets
+- sound cards & DACs
+- people — worldwide and by country
 
-## Разработка
+**[Check the rankings →](https://abxtest.com/ratings)**
 
-### Запуск dev-сервера
+### 14 languages 🌍
+English, Русский, Deutsch, Español, Français, Português, 中文, 日本語, 한국어, हिन्दी, Bahasa Indonesia, Italiano, Українська, Magyar.
 
-1. Инициализация проекта (первый запуск):
-```bash
-make init
-```
+### Solid FAQ
+How ABX works, why we match loudness, can you trust a browser test, how we're different from hi-res/DSD stuff.
 
-Эта команда:
-- Остановит существующие контейнеры
-- Загрузит необходимые Docker образы
-- Соберет контейнеры
-- Запустит PHP контейнер
-- Установит Composer зависимости
-- Запустит Nginx
-- Поднимет Webpack dev server
+**[Read the FAQ →](https://abxtest.com/faq)** 📖
 
-2. Для последующей разработки достаточно:
-```bash
-make devServer
-```
+---
 
-### Доступные make команды
+## How it goes
 
-| Команда | Описание |
-|---------|----------|
-| `make init` | Полная инициализация проекта |
-| `make down` | Остановка всех контейнеров |
-| `make build` | Сборка Docker контейнеров |
-| `make pull` | Загрузка Docker образов |
-| `make composer` | Доступ к Composer в PHP контейнере |
-| `make up-php` | Запуск PHP контейнера |
-| `make up-nginx` | Запуск Nginx контейнера |
-| `make devServer` | Запуск Webpack dev server |
-| `make realise` | Сборка production версии |
+1. Pick **what you're listening on** — headphones, speakers, sound card (models optional, chill)
+2. Listen to **A**, **B**, and **X** — answer: X = A or X = B?
+3. Get your **result** — your bitrate threshold + a link to flex (or cope)
+4. Wanna go again? Different genre, different gear — your call 🔁
 
-## Деплой
+Usually takes a few minutes. Less time than arguing about FLAC on Reddit.
 
-### Подготовка релиза
+---
 
-1. Соберите production версию:
-```bash
-make realise
-```
+## Who's this for?
 
-Это создаст оптимизированную сборку в директории `dist/`
+- **Music nerds & audiophiles** — prove you hear what you pay for (or don't)
+- **Streaming listeners** — do you need lossless or is 320 kbps enough? Let's find out
+- **Headphone owners** — see how different gear changes your threshold
+- **Curious people** — quick honest experiment, no foobar2000 install required
 
-## Контакты
+ABXtest isn't a lab-grade reference chain. It's a **real-life screening test**: Spotify, YouTube, podcasts, your headphones, your browser. For hardcore audiophile ABX — foobar2000 + foo_abx exists. For "MP3 vs lossless on *my* ears" — a web test makes total sense. 💯
 
-Telegram: [t.me/lyucean](https://t.me/lyucean)
+---
 
-.
+## Links
+
+| | |
+|---|---|
+| **Site** | [abxtest.com](https://abxtest.com) |
+| **Test** | [abxtest.com/setup](https://abxtest.com/setup) |
+| **FAQ** | [abxtest.com/faq](https://abxtest.com/faq) |
+| **Rankings** | [abxtest.com/ratings](https://abxtest.com/ratings) |
+| **Modes** | [abxtest.com/modes](https://abxtest.com/modes) |
+| **Sign up** | [abxtest.com/register](https://abxtest.com/register) |
+| **Telegram** | [t.me/lyucean](https://t.me/lyucean) |
+
+---
+
+## About
+
+ABXtest is a **[LYUCEAN](https://t.me/lyucean)** project. Open web service for blind hearing tests: ABX test, bitrate test, MP3 vs lossless, hearing threshold test.
+
+**Keywords:** ABX test online, blind audio test, MP3 vs FLAC, bitrate hearing test, lossless test, audiophile test, online hearing test, blind audio comparison, MP3 vs lossless difference.
+
+---
+
+## Tech stuff (quick)
+
+Web app (Laravel, Docker). Active dev lives in a private repo. This GitHub repo is the public face + docs. That's it, bro. 🤙
+
+---
+
+*Made with love for honest sound and healthy skepticism.* 🎵
